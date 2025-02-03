@@ -15,10 +15,17 @@ function chargerTeamSuccess(data, text, jqXHR) {
 	// Appelé lorsque la liste des équipes est reçue
     var cmbEquipes = document.getElementById("cmbEquipes");
     cmbEquipes.options.length = 0;
-    $(data).find("equipe").each(function() {
+   /*$(data).find("equipe").each(function() {
         var equipe = new Equipe();
         equipe.setPk($(this).find("id").text());
         equipe.setNom($(this).find("nom").text());
+        cmbEquipes.options[cmbEquipes.options.length] = new Option(equipe, JSON.stringify(equipe));
+    });*/
+
+    data.forEach(item => {
+        const equipe = new Equipe(item.id, item.nom);
+        equipe.setPk(item.id);
+        equipe.setNom( item.nom);
         cmbEquipes.options[cmbEquipes.options.length] = new Option(equipe, JSON.stringify(equipe));
     });
 }

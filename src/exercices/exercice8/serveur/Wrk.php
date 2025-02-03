@@ -1,20 +1,16 @@
 <?php
 
-class Wrk()
+class Wrk
 {
     public function getEquipes(){
+ 
+        $bdd = new PDO('mysql:host=mysql;dbname=hockey_stats', 'root', 'root');
 
-        $bdd = new PDO('mysql:host=localhost;dbname=nomDB', 'root', 'pwd');
-
-        $reponse = $bdd->prepare('SELECT nom from t_equipe');
+        $reponse = $bdd->prepare('SELECT pk_equipe, nom from t_equipe');
         $reponse->execute();
-
-        while ($data=$reponse->fetch())
-        {  
-            echo $data
-        }
-        return $reponse;
-        $reponse->closeCursor();
+        
+        return $reponse->fetchall();
+        
     }
 }
 
