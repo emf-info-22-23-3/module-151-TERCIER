@@ -4,9 +4,6 @@
   *
   * Cette classe représente un pays.
   *
-  * @version 1.0
-  * @author Neuhaus Olivier <neuhauso@edufr.ch>
-  * @project Exercice 10 - debuggage
   */
   class Pays
   {
@@ -43,7 +40,7 @@
     */
     public function getNom()
     {
-      return $this->nom;
+      return $this->pk_pays;
     }
     
     /**

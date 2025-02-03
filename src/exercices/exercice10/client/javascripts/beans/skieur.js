@@ -1,9 +1,6 @@
 /*
  * Bean "Skieur".
  *
- * @author Neuhaus Olivier
- * @project Test sommatif 1 2013
- * @version 1.0 / 13-SEP-2013
  */
 
 /**

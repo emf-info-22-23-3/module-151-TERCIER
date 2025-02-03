@@ -1,5 +1,5 @@
 <?php 
-	include_once('connexion.php');
+	include_once('Connexion.php');
 	include_once('beans/Pays.php');
         
 	/**
@@ -7,9 +7,6 @@
 	*
 	* Cette classe permet la gestion des pays dans la base de données dans l'exercice de debbugage
 	*
-	* @version 1.0
-	* @author Neuhaus Olivier <neuhauso@edufr.ch>
-	* @project Exercice 10 - debuggage
 	*/
 	class PaysBDManager
 	{
@@ -23,8 +20,8 @@
 		{
 			$count = 0;
 			$liste = array();
-			$connection = new Connection();
-			$query = $connection->executeQuery("select * from t_pays order by Nom");
+			$connection = Connexion::getInstance();
+			$query = $connection->selectQuery("select * from t_pays order by Nom", array());
 			foreach($query as $data){
 				$pays = new Pays($data['PK_pays'], $data['Nom']);
 				$liste[$count++] = $pays;
