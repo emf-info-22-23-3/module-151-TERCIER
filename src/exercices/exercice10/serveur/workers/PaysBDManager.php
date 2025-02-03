@@ -23,7 +23,7 @@
 			$connection = Connexion::getInstance();
 			$query = $connection->selectQuery("select * from t_pays order by Nom", array());
 			foreach($query as $data){
-				$pays = new Pays($data['PK_pays'], $data['Nom']);
+			$pays = new Pays($data['PK_pays'], $data['Nom']);
 				$liste[$count++] = $pays;
 			}	
 			return $liste;	

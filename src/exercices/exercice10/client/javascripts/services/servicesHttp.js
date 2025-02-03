@@ -3,7 +3,7 @@
  *
  */
 
-var BASE_URL = "http://localhost/server";
+var BASE_URL = "http://localhost:8080/exercices/exercice10/serveur/";
 
 /**
  * Fonction permettant de demander la liste des pays au serveur.

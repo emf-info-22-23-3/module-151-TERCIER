@@ -1,6 +1,6 @@
 <?php 
-	include_once('workers/paysBDManager.php');
-	include_once('beans/pays.php');
+	include_once('workers/PaysBDManager.php');
+	include_once('beans/Pays.php');
         
     if (isset($_SERVER['REQUEST_METHOD']))
 	{
