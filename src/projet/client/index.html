@@ -1,5 +1,43 @@
-<html>
-  <body>
-    <h1>Hello world</h1>
-  </body>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volcanova</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1 class="title">Volcanova</h1>
+        <div class="filters">
+            <input type="password" id="password" placeholder="admin">
+            <button id="login">Connexion</button>
+            <button id="logout" disabled>Déconnexion</button>
+        </div>
+        <div class="filters">   
+            <input type="text" id="search" placeholder="Nom du volcan">
+            <select id="country">
+                <option value="">Sélection par pays</option>
+                <option value="France">France</option>
+                <option value="Italie">Italie</option>
+                <option value="Indonésie">Indonésie</option>
+            </select>
+        </div>
+    </header>
+
+    <main>
+        <section class="volcan-list" id="volcanList">
+            <!-- Les cartes seront générées ici par JavaScript -->
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 Mon Site. Tous droits réservés.</p>
+      </div>
+    </footer>
+</body>
 </html>
