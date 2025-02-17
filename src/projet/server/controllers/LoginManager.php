@@ -1,7 +1,9 @@
 <?php 
-	include_once('workers/LoginBDManager.php');
-	include_once('beans/Login.php');
-    include_once('Session.php');
+	include_once(__DIR__ . '/../workers/LoginDBManager.php');
+	include_once(__DIR__ . '/../workers/Connection.php'); // Si utilisé dans LoginDBManager
+	include_once(__DIR__ . '/../workers/configConnection.php'); // Si nécessaire
+	include_once(__DIR__ . '/../beans/Login.php');
+	include_once(__DIR__ . '/../controllers/SessionManger.php');
         
 	/**
 	* Classe loginManager
@@ -14,26 +16,25 @@
 	*/
 	class LoginManager
 	{
-
-
-		/**
-		* Fonction permettant verifier si l'utilisateur a une session déjà ouverte
-        */
-
-        
-
-
-
-        public function Post_checkLogin($user, $password){
-           
-            $loginBD = new LoginBDManager();
-			return $loginBD->readLogins($user, $password);
-        }
+        public function Post_checkLogin($user, $password) {
+			$loginBD = new LoginBDManager();
+			$bool = $loginBD->readLogins($user, $password);
+			
+			if ($bool) {
+				return json_encode(["status" => "success", "message" => "Login réussi"]);
+			} else {
+				return json_encode(["status" => "error", "message" => "Nom ou mot de passe incorrect"]);
+			}
+		}
 
         public function Post_disconnect(){
 
         }
 
+
+		/**
+		* Fonction permettant verifier si l'utilisateur a une session déjà ouverte
+        */
 
 		/**
 		* Fonction permettant d'écrire la liste des logins en format JSON.

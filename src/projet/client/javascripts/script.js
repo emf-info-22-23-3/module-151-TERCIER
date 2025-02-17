@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function() {
         afficherVolcans(searchInput.value, countrySelect.value);
     });
 
-    // Simuler une connexion
+    /*// Simuler une connexion
     loginBtn.addEventListener("click", () => {
         alert("Connexion réussie !");
         loginBtn.disabled = true;
@@ -58,6 +58,58 @@ document.addEventListener("DOMContentLoaded", function() {
         alert("Déconnexion réussie !");
         loginBtn.disabled = false;
         logoutBtn.disabled = true;
+    });*/
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const loginBtn = document.getElementById("login");
+        const logoutBtn = document.getElementById("logout");
+        const adminInput = document.getElementById("admin");
+        const passwordInput = document.getElementById("password");
+    
+        function login() {
+            const nom = adminInput.value;
+            const pass = passwordInput.value;
+    
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: BASE_URL,
+                data: {
+                    action: "Post_checkLogin",
+                    Nom: nom,
+                    Pass: pass
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert("Connexion réussie !");
+                        sessionStorage.setItem("isLoggedIn", "true");
+                        loginBtn.disabled = true;
+                        logoutBtn.disabled = false;
+                    } else {
+                        alert("Échec de la connexion : " + response.message);
+                    }
+                },
+                error: function () {
+                    alert("Erreur lors de la tentative de connexion.");
+                }
+            });
+        }
+    
+        function logout() {
+            sessionStorage.removeItem("isLoggedIn");
+            alert("Déconnexion réussie !");
+            loginBtn.disabled = false;
+            logoutBtn.disabled = true;
+        }
+    
+        loginBtn.addEventListener("click", login);
+        logoutBtn.addEventListener("click", logout);
+    
+        // Vérifier si l'utilisateur est déjà connecté
+        if (sessionStorage.getItem("isLoggedIn") === "true") {
+            loginBtn.disabled = true;
+            logoutBtn.disabled = false;
+        }
     });
 
     // Charger les volcans au démarrage

@@ -1,55 +1,43 @@
 <?php
-include_once('configConnexion.php');
+include_once(__DIR__ . '/configConnection.php'); 
 class Connection {
-	private $pdo;
-	
-	/**
-     * Fonction d'ouvrir une connexion à la base de données.
-     */
+    private $pdo;
+
     public function __construct() {
-    	try {
-			$this->pdo = new PDO(DB_TYPE.':host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASS, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
-		}catch (PDOException $e) {
-    		print "Erreur !: " . $e->getMessage() . "<br/>";
-    		die();
-		}
-	}
-
-    /**
-     * Fonction permettant d'exécuter un select dans MySQL.
-     * A utiliser pour les SELECT.
-     * 
-     * @param String $query. Requête à exécuter.
-     * @return toutes les lignes du select
-     */
-    public function selectQuery($query) {
         try {
-	        $queryRes =  $this->pdo->query($query);		
-	        return  $queryRes->fetchAll();
+            $this->pdo = new PDO(
+                DB_TYPE . ':host=' . DB_HOST . ';dbname=' . DB_NAME,
+                DB_USER,
+                DB_PASS,
+                [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8']
+            );
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            print "Erreur !: " . $e->getMessage() . "<br/>";
-            die();
-        }
-    }
-	
-	/**
-     * Fonction permettant d'exécuter une requête MySQL.
-     * A utiliser pour les UPDATE, DELETE, INSERT.
-     *
-     * @param String $query. Requête à exécuter.
-     * @return true si la requête a été executée
-     */
-    public function executeQuery($query) {
-        try {
-			$this->pdo->query($query);
-			return true;
-        } catch (PDOException $e) {
-            print "Erreur !: " . $e->getMessage() . "<br/>";
-            die();
-			return false;
+            error_log("Erreur de connexion : " . $e->getMessage());
+            die("Erreur de connexion à la base de données.");
         }
     }
 
+    public function selectQuery($query, $params = []) {
+        try {
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute($params);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Erreur SQL : " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function executeQuery($query, $params = []) {
+        try {
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute($params);
+            return true;
+        } catch (PDOException $e) {
+            error_log("Erreur SQL : " . $e->getMessage());
+            return false;
+        }
+    }
 }
-
 ?>

@@ -1,6 +1,6 @@
 <?php 
-	include_once('Connexion.php');
-	include_once('beans/Login.php');
+	include_once(__DIR__ . '/../workers/Connection.php');
+	include_once(__DIR__ . '/../beans/Login.php');
 
         
 	/**
@@ -18,22 +18,20 @@
 		* Fonction permettant la lecture des Logins.
 		* @return liste de Login
 		*/
-		public function readLogins($user, $pass): bool
-		{
+		public function readLogins($user, $pass)
+        {
             $connection = new Connection(); 
-            $bool = false;
+            $query = "SELECT password FROM t_admin WHERE nom = ?";
+            $params = [$user];
+            $result = $connection->selectQuery($query, $params);
 
-            $stmt = $connection->prepare("SELECT * FROM t_admin WHERE nom = ? AND password = ?");
-            $stmt->bind_param("ss", $user, $pass);
-            $stmt->execute();
-            $result = $stmt->get_result();
-
-            if ($result && $result->num_rows > 0) {
-                $bool = true;
+            if ($result) {
+                $row = $result[0]; // PDO retourne un tableau d'associatif, on prend la première ligne.
+                return password_verify($pass, $row['password']);
             }
-
-            return $bool;	
-		}
+        
+            return false; 
+        }
 		
 		/**
 		* Fonction permettant d'ajouter un Login à la liste des Logins.

@@ -41,14 +41,28 @@ function ajouterVolcan(auteur, message, successCallback, errorCallback) {
 
 }
 
-function login(){
+function login(nom, pass) {
     $.ajax({
         type: "POST",
         dataType: "json",
         url: BASE_URL,
-        data:'action=AjouterMessage&auteur=' + auteur + '&message=' + message,
-        success: successCallback,
-        error: errorCallback
-      });
-  }
+        data: {
+            action: "Post_checkLogin",
+            Nom: nom,
+            Pass: pass
+        },
+        success: function(response) {
+            if (response.success) {
+                alert("Connexion réussie !");
+                loginBtn.disabled = true;
+                logoutBtn.disabled = false;
+            } else {
+                alert("Échec de la connexion : " + response.message);
+            }
+        },
+        error: function() {
+            alert("Erreur lors de la tentative de connexion.");
+        }
+    });
+}
 
