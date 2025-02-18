@@ -46,8 +46,8 @@
         }
 
         // Vérifier si l'utilisateur est déjà connecté
-        public function isUserConnected() {
+       /* public function isUserConnected() {
             return $this->sessionManager->isConnected();
-        }
+        }*/
 	}
 ?>

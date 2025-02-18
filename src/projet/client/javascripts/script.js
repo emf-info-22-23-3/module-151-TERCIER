@@ -111,6 +111,9 @@ document.addEventListener("DOMContentLoaded", function() {
         loginBtn.disabled = true;
         logoutBtn.disabled = false;
     }
+    // cepandent il y a un désaventage avec ce fonctionnement, la sessionStorage n'est pas partagé par le navigateur entre ses onglets
+    // une solution trouver étais que l'on pourrai demandé au serveur si le client est connecter en faisant un GET et en stockant la variable sur le serveur ou avec un cookie direcement sur le client
+
 
     afficherVolcans();
 });
