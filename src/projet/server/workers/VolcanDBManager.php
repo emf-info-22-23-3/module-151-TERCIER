@@ -23,10 +23,10 @@
 			$count = 0;
 			$liste = array();
 			$connection = new Connection();
+
 			$query = $connection->SelectQuery("select * from t_volcan");
 			foreach($query as $data){
-				$volcan = new Volcan($data['auteur'], $data['volcan']);
-				$liste[$count++] = $volcan;
+				
 			}	
 			return $liste;	
 		}
@@ -51,6 +51,42 @@
 				$res = '{"result":false}';
 			}
 			return $res;
+		}
+
+		public function modifyVolcan($pk, $volcan)
+		{
+		    $res = "";
+		    $connection = new Connection();
+		    $sql = "UPDATE t_volcan SET 
+		            nom = '" . $volcan->getNom() . "', 
+		            altitude = " . $volcan->getAltitude() . ", 
+		            latitude = " . $volcan->getLatitude() . ", 
+		            longitude = " . $volcan->getLongitude() . ", 
+		            pk_Pays = " . $volcan->getPkPays() . " 
+		            WHERE pk_Volcan = " . $pk;
+		
+		    $resultat = $connection->executeQuery($sql);        
+		    if ($resultat) {
+		        $res = '{"result":true}';
+		    } else {
+		        $res = '{"result":false}';
+		    }
+		    return $res;
+		}
+
+		public function deleteVolcan($pk)
+		{
+		    $res = "";
+		    $connection = new Connection();
+		    $sql = "DELETE FROM t_volcan WHERE pk_Volcan = " . $pk;
+		
+		    $resultat = $connection->executeQuery($sql);        
+		    if ($resultat) {
+		        $res = '{"result":true}';
+		    } else {
+		        $res = '{"result":false}';
+		    }
+		    return $res;
 		}
 	}
 ?>

@@ -13,6 +13,7 @@
     * @var string
     */
     private $nom;
+    
     /**
     * Variable représentant la pk du Volcan
     * @access private
@@ -103,18 +104,31 @@
     {
         return $this->pk_Pays;
     }
-    
+
     /**
-    * Fonction qui retourne le contenu du bean au format XML
-    * @return le contenu du bean au format XML
-    *
+     * Méthode __toString pour convertir l'objet Volcan en chaîne
+     * Cela vous permet d'utiliser l'objet dans des contextes où une chaîne est attendue.
+     * Exemple: insertion dans une requête SQL.
+     */
+    public function __toString() {
+        return $this->nom; // Vous pouvez retourner un autre attribut ou une combinaison d'attributs si nécessaire
+    }
+
+    /**
+    * Fonction qui retourne le contenu du bean Volcan au format XML
+    * @return string Le contenu du bean au format XML
+    */
     public function toXML()
     {
-      $result = '<Volcan>';
-      $result = $result . '<pk_Volcan>'.$this->getPkVolcan().'</pk_Volcan>';
-      $result = $result . '<nom>'.$this->getNom().'</nom>';
-      $result = $result . '</Volcan>';
-      return $result;
-    }*/
+        $result = '<Volcan>';
+        $result .= '<pk_Volcan>' . $this->getPkVolcan() . '</pk_Volcan>';
+        $result .= '<nom>' . $this->getNom() . '</nom>';
+        $result .= '<altitude>' . $this->getAltitude() . '</altitude>';
+        $result .= '<latitude>' . $this->getLatitude() . '</latitude>';
+        $result .= '<longitude>' . $this->getLongitude() . '</longitude>';
+        $result .= '<pk_Pays>' . $this->getPkPays() . '</pk_Pays>';
+        $result .= '</Volcan>';
+        return $result;
+    }
   }
 ?>
