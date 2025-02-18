@@ -15,6 +15,7 @@ class Connection {
         } catch (PDOException $e) {
             error_log("Erreur de connexion : " . $e->getMessage());
             die("Erreur de connexion à la base de données.");
+            
         }
     }
 

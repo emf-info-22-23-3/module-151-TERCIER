@@ -1,16 +1,16 @@
 <?php
 include_once 'controllers/LoginManager.php';
-include_once 'controllers/VolcanManager.php';
-include_once 'beans/Volcan.php';
-include_once 'workers/VolcanDBManager.php';
-include_once 'workers/Connection.php';
+//include_once 'controllers/VolcanManager.php';
+//include_once 'beans/Volcan.php';
+//include_once 'workers/VolcanDBManager.php';
+//include_once 'workers/Connection.php';
 
 if (isset($_SERVER['REQUEST_METHOD']))
 	{
 		switch ($_SERVER['REQUEST_METHOD'])
 		{
 			case 'GET':
-				// Récupérer tous les volcans
+				/*// Récupérer tous les volcans
 				$volcans = $volcanManager->getAllVolcans();
 				// On prépare une réponse JSON contenant la liste des volcans
 				$response = array();
@@ -25,7 +25,7 @@ if (isset($_SERVER['REQUEST_METHOD']))
 					);
 				}
 				// Renvoi de la liste des volcans au format JSON
-				echo json_encode($response);
+				echo json_encode($response);*/
 				
 				break;
 			case 'POST':
@@ -33,6 +33,7 @@ if (isset($_SERVER['REQUEST_METHOD']))
 				{
 					$LoginManager = new LoginManager();
 					echo $LoginManager->Post_checkLogin($_POST['Nom'], $_POST['Pass']);
+					
 					exit;
 				}
 				/*else{
@@ -41,7 +42,7 @@ if (isset($_SERVER['REQUEST_METHOD']))
 				}*/
 
 				// Ajouter un volcan
-				if (isset($_POST['Volcan']) and isset($_POST['Altitude']) and isset($_POST['Latitude']) and isset($_POST['Longitude']) and isset($_POST['Pk_Pays'])) {
+				/*if (isset($_POST['Volcan']) and isset($_POST['Altitude']) and isset($_POST['Latitude']) and isset($_POST['Longitude']) and isset($_POST['Pk_Pays'])) {
 					// Création d'un objet Volcan avec les données reçues
 					$volcan = new Volcan(
 						null, // PK n'est pas encore défini lors de l'ajout
@@ -58,7 +59,7 @@ if (isset($_SERVER['REQUEST_METHOD']))
 				} else {
 					echo 'Paramètre(s) manquant(s)';
 					exit;
-				}
+				}*/
 				
 			case 'PUT':
 				

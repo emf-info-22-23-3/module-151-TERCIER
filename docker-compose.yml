@@ -36,6 +36,6 @@ services:
       - database
     environment:
       PMA_HOST: database
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: emf123
     ports:
       - "8081:80"
