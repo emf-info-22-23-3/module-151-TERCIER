@@ -21,13 +21,14 @@
 		public function readLogins($user, $pass)
         {
             $connection = new Connection(); 
-            $query = "SELECT password FROM t_admin WHERE nom = ?";
-            $params = [$user];
-            $result = $connection->selectQuery($query, $params);
-
+            $query = "SELECT pass FROM t_admin WHERE nom = :nom";
+            $params = array("nom"=>$user);
+            $result = $connection->selectQuerySingleReturn($query, $params);
+            //echo password_hash($pass,PASSWORD_DEFAULT)."<br>";
+            //print_r($result);
             if ($result) {
-                $row = $result[0]; // PDO retourne un tableau d'associatif, on prend la première ligne.
-                return password_verify($pass, $row['password']);
+                $row = $result["pass"]; // PDO retourne un tableau d'associatif, on prend la première ligne.
+                return password_verify($pass, $row);
             }
         
             return false; 

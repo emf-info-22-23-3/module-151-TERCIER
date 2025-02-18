@@ -21,14 +21,23 @@ class Connection {
     public function selectQuery($query, $params = []) {
         try {
             $stmt = $this->pdo->prepare($query);
-            $stmt->execute($params);
+            $stmt->execute(params: $params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("Erreur SQL : " . $e->getMessage());
             return [];
         }
     }
-
+    public function selectQuerySingleReturn($query, $params = []) {
+        try {
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute(params: $params);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Erreur SQL : " . $e->getMessage());
+            return [];
+        }
+    }
     public function executeQuery($query, $params = []) {
         try {
             $stmt = $this->pdo->prepare($query);

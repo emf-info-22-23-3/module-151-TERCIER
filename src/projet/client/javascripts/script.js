@@ -4,6 +4,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const countrySelect = document.getElementById("country");
     const loginBtn = document.getElementById("login");
     const logoutBtn = document.getElementById("logout");
+    const adminInput = document.getElementById("admin");
+    const passwordInput = document.getElementById("password");
+    const errorMessage = document.getElementById("error-message");
+    const BASE_URL = "http://127.0.0.1:8080/projet/server/server.php"
 
     let volcans = [
         { nom: "Etna", pays: "Italie", lieu: "Sicile", altitude: "3,357m", latitude: "37.75", longitude: "15.00" },
@@ -36,82 +40,77 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Écouteur pour la recherche
     searchInput.addEventListener("input", () => {
         afficherVolcans(searchInput.value, countrySelect.value);
     });
 
-    // Écouteur pour la sélection du pays
     countrySelect.addEventListener("change", () => {
         afficherVolcans(searchInput.value, countrySelect.value);
     });
 
-    /*// Simuler une connexion
-    loginBtn.addEventListener("click", () => {
-        alert("Connexion réussie !");
-        loginBtn.disabled = true;
-        logoutBtn.disabled = false;
-    });
+    function login() {
+        const nom = adminInput.value.trim();
+        const pass = passwordInput.value.trim();
+        
+        if (!nom || !pass) {
+            errorMessage.textContent = "Veuillez remplir tous les champs.";
+            errorMessage.style.display = "block";
+            return;
+        }
 
-    // Simuler une déconnexion
-    logoutBtn.addEventListener("click", () => {
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: BASE_URL, // Assurez-vous que BASE_URL est défini !
+            data: {
+                action: "Post_checkLogin",
+                Nom: nom,
+                Pass: pass
+            },
+            success: function(response) {
+                if (response.status === "success") {
+                    alert("Connexion réussie !");
+                    sessionStorage.setItem("isLoggedIn", "true");
+    
+                    // Disable and hide fields after login
+                    adminInput.readOnly = true;
+                    passwordInput.style.display = "none";
+                    loginBtn.disabled = true;
+                    logoutBtn.disabled = false;
+                    errorMessage.style.display = "none"; // Hide error message on success
+                } else {
+                    errorMessage.textContent = response.message || "Nom d'utilisateur ou mot de passe incorrect.";
+                    errorMessage.style.display = "block";
+                }
+            },
+            error: function() {
+                errorMessage.textContent = "Erreur de connexion au serveur.";
+                errorMessage.style.display = "block";
+            }
+        });
+    }
+
+    function logout() {
+        sessionStorage.removeItem("isLoggedIn");
         alert("Déconnexion réussie !");
+
+        // Réactiver et réafficher les champs après déconnexion
+        adminInput.readOnly = false;
+        passwordInput.style.display = "inline-block";
         loginBtn.disabled = false;
         logoutBtn.disabled = true;
-    });*/
+    }
 
-    document.addEventListener("DOMContentLoaded", function () {
-        const loginBtn = document.getElementById("login");
-        const logoutBtn = document.getElementById("logout");
-        const adminInput = document.getElementById("admin");
-        const passwordInput = document.getElementById("password");
-    
-        function login() {
-            const nom = adminInput.value;
-            const pass = passwordInput.value;
-    
-            $.ajax({
-                type: "POST",
-                dataType: "json",
-                url: BASE_URL,
-                data: {
-                    action: "Post_checkLogin",
-                    Nom: nom,
-                    Pass: pass
-                },
-                success: function (response) {
-                    if (response.success) {
-                        alert("Connexion réussie !");
-                        sessionStorage.setItem("isLoggedIn", "true");
-                        loginBtn.disabled = true;
-                        logoutBtn.disabled = false;
-                    } else {
-                        alert("Échec de la connexion : " + response.message);
-                    }
-                },
-                error: function () {
-                    alert("Erreur lors de la tentative de connexion.");
-                }
-            });
-        }
-    
-        function logout() {
-            sessionStorage.removeItem("isLoggedIn");
-            alert("Déconnexion réussie !");
-            loginBtn.disabled = false;
-            logoutBtn.disabled = true;
-        }
-    
-        loginBtn.addEventListener("click", login);
-        logoutBtn.addEventListener("click", logout);
-    
-        // Vérifier si l'utilisateur est déjà connecté
-        if (sessionStorage.getItem("isLoggedIn") === "true") {
-            loginBtn.disabled = true;
-            logoutBtn.disabled = false;
-        }
-    });
+    loginBtn.addEventListener("click", login);
+    logoutBtn.addEventListener("click", logout);
 
-    // Charger les volcans au démarrage
+    // Vérifier si l'utilisateur est déjà connecté au chargement de la page
+    if (sessionStorage.getItem("isLoggedIn") === "true") {
+        adminInput.readOnly = true;
+        passwordInput.style.display = "none";
+        loginBtn.disabled = true;
+        logoutBtn.disabled = false;
+    }
+
     afficherVolcans();
 });
