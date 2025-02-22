@@ -1,6 +1,6 @@
 <?php 
-	include_once('Connexion.php');
-	include_once('beans/Pays.php');
+	include_once(__DIR__.'/Connection.php');
+	include_once(__DIR__.'/../beans/Pays.php');
 
         
 	/**
@@ -13,44 +13,30 @@
 	* @project project
 	*/
 	class PaysBDManager
-	{
-		/**
-		* Fonction permettant la lecture des Payss.
-		* @return liste de Pays
-		*/
-		public function readPayss()
-		{
-			$count = 0;
-			$liste = array();
-			$connection = new Connection();
-			$query = $connection->SelectQuery("select * from t_pays");
-			foreach($query as $data){
-				$pays = new Pays($data['auteur'], $data['pays']);
-				$liste[$count++] = $pays;
-			}	
-			return $liste;	
-		}
-		
-		/**
-		* Fonction permettant d'ajouter un pays à la liste des payss.
-		* @param auteur le nom de l'auteur
-		* @param pays le pays à ajouter
-		* @return true si tout s'est passé correctement, sinon false.
-		*/
-		public function addPays($auteur, $pays)
-		{
-			$res = "";
-			$connection = new Connection();
-			$sql = "insert into t_pays (auteur, pays) values ('" .$auteur . "','" .$pays. "')";
-			$resultat = $connection->executeQuery($sql);		
-			if ($resultat)
-			{
-				$res = '{"result":true}';
-			}
-			else{
-				$res = '{"result":false}';
-			}
-			return $res;
-		}
-	}
+{
+    /**
+    * Fonction permettant la lecture des Pays.
+    * @return array Liste de Pays
+    */
+    public function readPays()
+    {
+        $liste = [];
+        try {
+            $connection = new Connection();
+            $query = $connection->SelectQuery("SELECT * FROM t_pays");
+
+            foreach ($query as $data) {
+                // Assuming 'PK_pays' and 'nom' are the correct column names
+                $pays = new Pays($data['PK_pays'], $data['nom']);
+                $liste[] = $pays;
+            }
+        } catch (Exception $e) {
+            // Handle database errors
+            echo 'Error fetching countries: ' . $e->getMessage();
+        }
+
+        return $liste;
+    }
+}
+
 ?>

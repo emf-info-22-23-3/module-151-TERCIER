@@ -24,7 +24,7 @@
             $query = "SELECT pass FROM t_admin WHERE nom = :nom";
             $params = array("nom"=>$user);
             $result = $connection->selectQuerySingleReturn($query, $params);
-            echo password_hash($pass,PASSWORD_DEFAULT)."<br>";
+            //echo password_hash($pass,PASSWORD_DEFAULT)."<br>";
             //print_r($result);
             if ($result) {
                 $row = $result["pass"]; // PDO retourne un tableau d'associatif, on prend la première ligne.

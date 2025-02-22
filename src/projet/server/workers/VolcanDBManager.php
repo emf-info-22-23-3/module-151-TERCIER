@@ -1,92 +1,95 @@
 <?php 
-	include_once('Connexion.php');
-	include_once('beans/Volcan.php');
+include_once(__DIR__.'/../workers/Connection.php');
+include_once('beans/Volcan.php');
 
-        
-	/**
-	* Classe VolcanBDManager
-	*
-	* Cette classe permet la gestion des Volcans dans la base de données 
-	*
-	* @version 1.0
-	* @author Tercicer colin
-	* @project project
-	*/
-	class VolcanBDManager
-	{
-		/**
-		* Fonction permettant la lecture des Volcans.
-		* @return liste de Volcan
-		*/
-		public function readVolcans()
-		{
-			$count = 0;
-			$liste = array();
-			$connection = new Connection();
+/**
+ * Classe VolcanBDManager
+ * Gère les interactions avec la base de données pour les volcans.
+ */
+class VolcanBDManager
+{
+    /**
+     * Lire tous les volcans depuis la base de données.
+     * @return array Liste des volcans
+     */
+    public function readVolcans()
+    {
+        $connection = new Connection();
+        $query = "SELECT * FROM t_volcan";
+        $results = $connection->selectQuery($query);
 
-			$query = $connection->SelectQuery("select * from t_volcan");
-			foreach($query as $data){
-				
-			}	
-			return $liste;	
-		}
-		
-		/**
-		* Fonction permettant d'ajouter un volcan à la liste des volcans.
-		* @param auteur le nom de l'auteur
-		* @param volcan le volcan à ajouter
-		* @return true si tout s'est passé correctement, sinon false.
-		*/
-		public function addVolcan($auteur, $volcan)
-		{
-			$res = "";
-			$connection = new Connection();
-			$sql = "insert into t_volcan (auteur, volcan) values ('" .$auteur . "','" .$volcan. "')";
-			$resultat = $connection->executeQuery($sql);		
-			if ($resultat)
-			{
-				$res = '{"result":true}';
-			}
-			else{
-				$res = '{"result":false}';
-			}
-			return $res;
-		}
+        $volcans = [];
+        foreach ($results as $data) {
+            $volcans[] = new Volcan(
+                $data['PK_volcan'],
+                $data['nom'],
+                $data['altitude'],
+                $data['latitude'],
+                $data['longitude'],
+                $data['FK_pays']
+            );
+        }
+        return $volcans;
+    }
 
-		public function modifyVolcan($pk, $volcan)
-		{
-		    $res = "";
-		    $connection = new Connection();
-		    $sql = "UPDATE t_volcan SET 
-		            nom = '" . $volcan->getNom() . "', 
-		            altitude = " . $volcan->getAltitude() . ", 
-		            latitude = " . $volcan->getLatitude() . ", 
-		            longitude = " . $volcan->getLongitude() . ", 
-		            pk_Pays = " . $volcan->getPkPays() . " 
-		            WHERE pk_Volcan = " . $pk;
-		
-		    $resultat = $connection->executeQuery($sql);        
-		    if ($resultat) {
-		        $res = '{"result":true}';
-		    } else {
-		        $res = '{"result":false}';
-		    }
-		    return $res;
-		}
+    /**
+     * Ajouter un volcan dans la base de données.
+     * @param string $auteur Nom de l'auteur
+     * @param Volcan $volcan Objet Volcan à insérer
+     * @return bool Succès de l'insertion
+     */
+    public function addVolcan($auteur, $volcan)
+    {
+        $connection = new Connection();
+        $sql = "INSERT INTO t_volcan (nom, altitude, latitude, longitude, pk_Pays) 
+                VALUES (?, ?, ?, ?, ?)";
+        $params = [
+            htmlspecialchars($volcan->getNom()),
+            (float) $volcan->getAltitude(),
+            (float) $volcan->getLatitude(),
+            (float) $volcan->getLongitude(),
+            (int) $volcan->getPkPays()
+        ];
+        return $connection->executeQuery($sql, $params);
+    }
 
-		public function deleteVolcan($pk)
-		{
-		    $res = "";
-		    $connection = new Connection();
-		    $sql = "DELETE FROM t_volcan WHERE pk_Volcan = " . $pk;
-		
-		    $resultat = $connection->executeQuery($sql);        
-		    if ($resultat) {
-		        $res = '{"result":true}';
-		    } else {
-		        $res = '{"result":false}';
-		    }
-		    return $res;
-		}
-	}
+    /**
+     * Modifier un volcan existant.
+     * @param int $pk Identifiant du volcan
+     * @param Volcan $volcan Objet Volcan mis à jour
+     * @return bool Succès de la modification
+     */
+    public function modifyVolcan($pk, $volcan)
+    {
+        $connection = new Connection();
+        $sql = "UPDATE t_volcan SET 
+                nom = ?, 
+                altitude = ?, 
+                latitude = ?, 
+                longitude = ?, 
+                pk_Pays = ? 
+                WHERE pk_Volcan = ?";
+        $params = [
+            htmlspecialchars($volcan->getNom()),
+            (float) $volcan->getAltitude(),
+            (float) $volcan->getLatitude(),
+            (float) $volcan->getLongitude(),
+            (int) $volcan->getPkPays(),
+            (int) $pk
+        ];
+        return $connection->executeQuery($sql, $params);
+    }
+
+    /**
+     * Supprimer un volcan par son ID.
+     * @param int $pk Identifiant du volcan
+     * @return bool Succès de la suppression
+     */
+    public function deleteVolcan($pk)
+    {
+        $connection = new Connection();
+        $sql = "DELETE FROM t_volcan WHERE pk_Volcan = ?";
+        return $connection->executeQuery($sql, [(int) $pk]);
+    }
+}
 ?>
