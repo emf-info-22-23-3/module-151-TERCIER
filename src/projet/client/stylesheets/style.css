@@ -22,6 +22,7 @@ h1 {
     margin-bottom: 10px;
 }
 
+/* Filtre de recherche */
 .filters {
     display: flex;
     justify-content: center;
@@ -87,6 +88,7 @@ h1 {
     color: rgb(255, 100, 28);
 }
 
+/* Footer */
 footer {
     background-color: #333;
     color: #fff;
@@ -94,20 +96,21 @@ footer {
     text-align: center;
 }
 
+/* Container */
 .container {
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
 }
 
-/* Style pour la popup */
+/* Style de la popup */
 .popup {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -120,8 +123,8 @@ footer {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
     width: 300px;
     text-align: center;
-    max-height: 90vh; /* Empêche la popup d'être trop grande */
-    overflow-y: auto; /* Ajoute un défilement si nécessaire */
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .popup-content label {
@@ -154,4 +157,69 @@ footer {
 #popup-close {
     background-color: #dc3545;
     color: white;
+}
+
+/* Boutons de gestion */
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modify-btn {
+    background-color: #e07b00;
+    color: white;
+    border: 2px solid #e07b00;
+}
+
+.modify-btn:hover {
+    background-color: #e07b00;
+    border-color: #e07b00;
+    transform: translateY(-2px);
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: 2px solid #c82333;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+    transform: translateY(-2px);
+}
+
+.button:active {
+    transform: translateY(1px);
+}
+
+/* Bouton "Ajouter un volcan" */
+#add-volcan {
+    background-color: #28a745; /* Vert pour représenter l'action d'ajouter */
+    color: white;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none; /* Il sera masqué au départ */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Effet au survol */
+#add-volcan:hover {
+    background-color: #218838; /* Changer de couleur lorsque survolé */
+    transform: scale(1.05); /* Légère augmentation de la taille */
+}
+
+#add-volcan:disabled {
+    background-color: gray; /* Couleur grise quand désactivé */
+    cursor: not-allowed; /* Empêcher l'interaction */
 }

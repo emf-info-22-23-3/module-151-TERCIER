@@ -38,7 +38,7 @@ class VolcanBDManager
      * @param Volcan $volcan Objet Volcan à insérer
      * @return bool Succès de l'insertion
      */
-    public function addVolcan($auteur, $volcan)
+    public function addVolcan($volcan)
 	{
 	    $connection = new Connection();
 

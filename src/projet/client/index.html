@@ -24,20 +24,19 @@
         </div>
         <div class="filters">
             <input type="text" id="search" placeholder="Nom du volcan">
-            <select id="country">
-                <option value="">Sélection par pays</option>
-                <option value="France">France</option>
-                <option value="Italie">Italie</option>
-                <option value="Indonésie">Indonésie</option>
-            </select>
+            <select id="country"></select>
         </div>
+        <!-- Un seul bouton "Ajouter un volcan" ici -->
         <button id="add-volcan" style="display: none;">Ajouter un volcan</button>
     </header>
 
     <main>
+        <!-- La liste des volcans sera générée ici par JavaScript -->
         <section class="volcan-list" id="volcanList">
-            <!-- Les cartes seront générées ici par JavaScript -->
+            <!-- Les cartes des volcans viendront ici -->
         </section>
+
+        <!-- Popup pour ajouter/modifier un volcan -->
         <div id="volcan-popup" class="popup" style="display: none;">
             <div class="popup-content">
                 <h2 id="popup-title">Ajouter un volcan</h2>
@@ -46,13 +45,11 @@
                 <label>Altitude :</label><input type="number" id="popup-altitude">
                 <label>Latitude :</label><input type="text" id="popup-latitude">
                 <label>Longitude :</label><input type="text" id="popup-longitude">
-                <button id="popup-save">Ajouter</button>
-                <button id="popup-close">Annuler</button>
+                <button id="popup-save" class="button">Ajouter</button>
+                <button id="popup-close" class="button">Annuler</button>
             </div>
         </div>
     </main>
-
-    
 
     <footer>
         <div class="container">

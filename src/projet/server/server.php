@@ -121,11 +121,42 @@ if (isset($_SERVER['REQUEST_METHOD']))
 						exit();
 
 				}
-				break;
-				
+			break;
+			
 			case 'PUT':
-				
-				break;
+				// Récupérer les données envoyées en PUT
+				$input = file_get_contents('php://input');
+				$data = json_decode($input, true);
+			
+				// Vérifier si toutes les données requises sont présentes
+				if (!isset($data['nom'], $data['altitude'], $data['latitude'], $data['longitude'], $data['pays'])) {
+					echo json_encode(['status' => 'error', 'message' => 'Paramètre(s) manquant(s)']);
+					exit();
+				}
+			
+				// Création de l'objet Volcan
+				$volcan = new Volcan(
+					null,  // L'ID est auto-incrémenté dans la base
+					htmlspecialchars($data['nom']),
+					(float) $data['altitude'],
+					(float) $data['latitude'],
+					(float) $data['longitude'],
+					(int) $data['pays']
+				);
+			
+				// Ajouter le volcan via le VolcanManager
+				$volcanManager = new VolcanManager();
+				$result = $volcanManager->addVolcan($volcan);
+			
+				if ($result) {
+					echo json_encode(['status' => 'success', 'message' => 'Volcan ajouté avec succès !']);
+				} else {
+					echo json_encode(['status' => 'error', 'message' => 'Échec de l\'ajout du volcan']);
+				}
+				exit();
+			
+			
+			break;
 			case 'DELETE':
 				// Récupérer les données de la requête DELETE via php://input
 				$input = file_get_contents('php://input');
