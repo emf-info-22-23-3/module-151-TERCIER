@@ -70,45 +70,88 @@ if (isset($_SERVER['REQUEST_METHOD']))
 				break;
 			
 			case 'POST':
-				if (isset($_POST['Pass']) and isset($_POST['Nom']))
-				{
-					$LoginManager = new LoginManager();
-					echo $LoginManager->Post_checkLogin($_POST['Nom'], $_POST['Pass']);
-					
-					exit;
-				}
-				/*else{
-					echo 'Paramètre Pass ou Nom manquant';
-					exit;
-				}*/
+				switch ($_POST['action'] ?? '') {
+					case 'Post_checkLogin' :
 
-				// Ajouter un volcan
-				/*if (isset($_POST['Volcan']) and isset($_POST['Altitude']) and isset($_POST['Latitude']) and isset($_POST['Longitude']) and isset($_POST['Pk_Pays'])) {
-					// Création d'un objet Volcan avec les données reçues
-					$volcan = new Volcan(
-						null, // PK n'est pas encore défini lors de l'ajout
-						$_POST['Volcan'],
-						$_POST['Altitude'],
-						$_POST['Latitude'],
-						$_POST['Longitude'],
-						$_POST['Pk_Pays']
-					);
-					// Appel à la méthode d'ajout dans VolcanManager
-					$VolcanManager = new VolcanManager();
-					$result = $volcanManager->addNewVolcan('Admin', $volcan);
-					echo $result;  // Réponse sur l'ajout
-					exit;
-				} else {
-					echo 'Paramètre(s) manquant(s)';
-					exit;
-				}*/
+						if (isset($_POST['Pass']) && isset($_POST['Nom'])) {
+							$LoginManager = new LoginManager();
+							echo $LoginManager->Post_checkLogin($_POST['Nom'], $_POST['Pass']);
+							exit;
+						}else {
+							echo 'Paramètre Pass ou Nom manquant';
+							exit;
+						}
+						exit;
+					
+					case 'Update_volcan':
+				
+						// Debugging
+						//var_dump($_POST);
+						
+						// Vérifier que l'ID est présent pour éviter un ajout
+						if (!isset($_POST['id'])) {
+							echo json_encode(['status' => 'error', 'message' => 'L\'ID du volcan est requis pour la modification.']);
+							exit;
+						}
+					
+						// Vérifier la présence des autres paramètres requis
+						if (!isset($_POST['nom'], $_POST['altitude'], $_POST['latitude'], $_POST['longitude'], $_POST['pays'])) {
+							echo json_encode(['status' => 'error', 'message' => 'Paramètre(s) manquant(s)']);
+							exit;
+						}
+					
+						// Création de l'objet Volcan pour la modification
+						$volcan = new Volcan(
+							$_POST['id'],
+							$_POST['nom'],
+							$_POST['altitude'],
+							$_POST['latitude'],
+							$_POST['longitude'],
+							$_POST['pays']
+						);
+					
+						$volcanManager = new VolcanManager();
+						$result = $volcanManager->modifyExistingVolcan($_POST['id'], $volcan);
+				
+						if ($result) {
+						    echo json_encode(['status' => 'success', 'message' => 'Volcan modifié avec succès !']);
+						} else {
+						    echo json_encode(['status' => 'error', 'message' => 'Échec de la modification du volcan']);
+						}
+						exit();
+
+				}
+				break;
 				
 			case 'PUT':
 				
 				break;
 			case 'DELETE':
+				// Récupérer les données de la requête DELETE via php://input
+				$input = file_get_contents('php://input');
+			
+				// Décoder le JSON
+				$data = json_decode($input, true);
+			
+				// Vérifier si l'ID du volcan est présent et valide
+				if (isset($data['id']) && is_numeric($data['id'])) {
+					// Créer une instance de VolcanManager pour gérer la suppression
+					$volcanManager = new VolcanManager();
+					$result = $volcanManager->deleteVolcanById($data['id']);
+			
+					// Retourner un message de succès ou d'erreur
+					if ($result) {
+						echo json_encode(['status' => 'success', 'message' => 'Volcan supprimé avec succès !']);
+					} else {
+						echo json_encode(['status' => 'error', 'message' => 'Échec de la suppression du volcan.']);
+					}
+				} else {
+					// Si l'ID est manquant ou invalide
+					echo json_encode(['status' => 'error', 'message' => 'L\'ID du volcan est requis et doit être valide.']);
+				}
+				exit();
 				
-				break;
+				
 		}
 	}
 	

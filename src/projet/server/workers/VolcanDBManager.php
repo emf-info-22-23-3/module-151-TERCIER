@@ -39,19 +39,52 @@ class VolcanBDManager
      * @return bool Succès de l'insertion
      */
     public function addVolcan($auteur, $volcan)
-    {
-        $connection = new Connection();
-        $sql = "INSERT INTO t_volcan (nom, altitude, latitude, longitude, pk_Pays) 
-                VALUES (?, ?, ?, ?, ?)";
-        $params = [
-            htmlspecialchars($volcan->getNom()),
-            (float) $volcan->getAltitude(),
-            (float) $volcan->getLatitude(),
-            (float) $volcan->getLongitude(),
-            (int) $volcan->getPkPays()
-        ];
-        return $connection->executeQuery($sql, $params);
-    }
+	{
+	    $connection = new Connection();
+
+	    // Vérifier que tous les paramètres sont valides
+	    if (empty($volcan->getNom()) || 
+	        !is_numeric($volcan->getAltitude()) || 
+	        !is_numeric($volcan->getLatitude()) || 
+	        !is_numeric($volcan->getLongitude()) || 
+	        !is_numeric($volcan->getPkPays())) {
+			
+	        return json_encode(['status' => 'error', 'message' => 'Paramètres invalides']);
+	    }
+
+	    // Vérifier si un volcan avec le même nom et coordonnées existe déjà
+	    $checkSql = "SELECT COUNT(*) as count FROM t_volcan 
+	                 WHERE nom = ? AND latitude = ? AND longitude = ?";
+	    $existing = $connection->selectQuery($checkSql, [
+	        htmlspecialchars($volcan->getNom()),
+	        (float) $volcan->getLatitude(),
+	        (float) $volcan->getLongitude()
+	    ]);
+
+	    if ($existing[0]['count'] > 0) {
+	        return json_encode(['status' => 'error', 'message' => 'Ce volcan existe déjà']);
+	    }
+
+	    // Insertion du volcan
+	    $sql = "INSERT INTO t_volcan (nom, altitude, latitude, longitude, FK_pays) 
+	            VALUES (?, ?, ?, ?, ?)";
+	    $params = [
+	        htmlspecialchars($volcan->getNom()),
+	        (float) $volcan->getAltitude(),
+	        (float) $volcan->getLatitude(),
+	        (float) $volcan->getLongitude(),
+	        (int) $volcan->getPkPays()
+	    ];
+
+	    $inserted = $connection->executeQuery($sql, $params);
+
+	    if ($inserted) {
+	        return json_encode(['status' => 'success', 'message' => 'Volcan ajouté avec succès']);
+	    } else {
+	        return json_encode(['status' => 'error', 'message' => 'Erreur lors de l\'ajout du volcan']);
+	    }
+	}
+
 
     /**
      * Modifier un volcan existant.
@@ -60,25 +93,37 @@ class VolcanBDManager
      * @return bool Succès de la modification
      */
     public function modifyVolcan($pk, $volcan)
-    {
-        $connection = new Connection();
-        $sql = "UPDATE t_volcan SET 
-                nom = ?, 
-                altitude = ?, 
-                latitude = ?, 
-                longitude = ?, 
-                pk_Pays = ? 
-                WHERE pk_Volcan = ?";
-        $params = [
-            htmlspecialchars($volcan->getNom()),
-            (float) $volcan->getAltitude(),
-            (float) $volcan->getLatitude(),
-            (float) $volcan->getLongitude(),
-            (int) $volcan->getPkPays(),
-            (int) $pk
-        ];
-        return $connection->executeQuery($sql, $params);
-    }
+	{
+	    if (!$pk || !$volcan instanceof Volcan) {
+	        return false; // Vérifie que l'ID est valide et que $volcan est un objet Volcan
+	    }
+
+	    $connection = new Connection();
+	    $sql = "UPDATE t_volcan SET 
+	            nom = ?, 
+	            altitude = ?, 
+	            latitude = ?, 
+	            longitude = ?, 
+	            FK_pays = ? 
+	            WHERE PK_volcan = ?"; // Correction du nom des colonnes
+
+	    $params = [
+	        trim($volcan->getNom()), // Suppression des espaces inutiles
+	        (float) $volcan->getAltitude(),
+	        (float) $volcan->getLatitude(),
+	        (float) $volcan->getLongitude(),
+	        (int) $volcan->getPkPays(),
+	        (int) $pk
+	    ];
+
+	    try {
+        	return $connection->executeQuery($sql, $params);
+    	} catch (Exception $e) {
+    	    json_encode('Error executing query: ' . $e->getMessage());
+    	    return false;
+    	}
+	}
+
 
     /**
      * Supprimer un volcan par son ID.
@@ -86,10 +131,32 @@ class VolcanBDManager
      * @return bool Succès de la suppression
      */
     public function deleteVolcan($pk)
-    {
-        $connection = new Connection();
-        $sql = "DELETE FROM t_volcan WHERE pk_Volcan = ?";
-        return $connection->executeQuery($sql, [(int) $pk]);
-    }
+	{
+	    $connection = new Connection();
+
+	    // Vérifier que l'ID est bien un entier positif
+	    if (!is_numeric($pk) || (int)$pk <= 0) {
+	        return json_encode(['status' => 'error', 'message' => 'ID invalide']);
+	    }
+
+	    // Vérifier si le volcan existe avant de supprimer
+	    $checkSql = "SELECT COUNT(*) as count FROM t_volcan WHERE PK_volcan = ?";
+	    $result = $connection->selectQuery($checkSql, [(int) $pk]);
+
+	    if ($result[0]['count'] == 0) {
+	        return json_encode(['status' => 'error', 'message' => 'Le volcan n\'existe pas']);
+	    }
+
+	    // Supprimer le volcan
+	    $sql = "DELETE FROM t_volcan WHERE PK_volcan = ?";
+	    $deleted = $connection->executeQuery($sql, [(int) $pk]);
+
+	    if ($deleted) {
+	        return json_encode(['status' => 'success', 'message' => 'Volcan supprimé avec succès']);
+	    } else {
+	        return json_encode(['status' => 'error', 'message' => 'Erreur lors de la suppression']);
+	    }
+	}
+
 }
 ?>

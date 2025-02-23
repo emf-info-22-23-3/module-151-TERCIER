@@ -17,19 +17,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const popupSave = document.getElementById("popup-save");
     const popupClose = document.getElementById("popup-close");
     let editVolcanId = null; // Déclarer editVolcanId pour suivre l'ID du volcan à modifier
+    let editVolcanPaysId = null; // Variable pour stocker l'ID du pays
+    let isLoggedIn;
 
     function showPopup(volcan = null) {
         popup.style.display = "flex";
-
+    
         if (volcan) {
             popupTitle.textContent = "Modifier le volcan";
             popupSave.textContent = "Enregistrer";
             document.getElementById("popup-nom").value = volcan.nom;
-            document.getElementById("popup-lieu").value = volcan.lieu;
+            document.getElementById("popup-lieu").value = volcan.pays;
             document.getElementById("popup-altitude").value = volcan.altitude;
             document.getElementById("popup-latitude").value = volcan.latitude;
             document.getElementById("popup-longitude").value = volcan.longitude;
             editVolcanId = volcan.id; // Garder une trace de l'ID du volcan à modifier
+            editVolcanPaysId = Object.keys(paysMap).find(key => paysMap[key] === volcan.pays); // Assigner l'ID du pays
         } else {
             popupTitle.textContent = "Ajouter un volcan";
             popupSave.textContent = "Ajouter";
@@ -39,8 +42,10 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("popup-latitude").value = "";
             document.getElementById("popup-longitude").value = "";
             editVolcanId = null; // Réinitialiser l'ID pour une nouvelle création
+            editVolcanPaysId = null; // Réinitialiser l'ID du pays pour une nouvelle création
         }
     }
+    
 
     function hidePopup() {
         popup.style.display = "none";
@@ -122,7 +127,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function afficherVolcans(filtreNom = "", filtrePays = "") {
         volcanList.innerHTML = "";
         const filtreNomMinuscule = filtreNom.toLowerCase();
-        let isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true";
+        isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true";
 
         let filtered = volcans.filter(volcan =>
             (filtreNom === "" || volcan.nom.toLowerCase().includes(filtreNomMinuscule)) &&
@@ -149,7 +154,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 let modifyBtn = document.createElement("button");
                 modifyBtn.textContent = "Modifier";
                 modifyBtn.style.backgroundColor = "#ffc107";
-                modifyBtn.onclick = () => showPopup(volcan);
+                modifyBtn.onclick = () => {
+                editVolcanId = volcan.id;  // Remplir editVolcanId avec l'ID du volcan à modifier
+                showPopup(volcan); // Afficher le popup pour modifier ce volcan
+            };
 
                 let deleteBtn = document.createElement("button");
                 deleteBtn.textContent = "Supprimer";
@@ -168,20 +176,25 @@ document.addEventListener("DOMContentLoaded", function () {
         popup.style.display = "none";
     }
 
+    let id;
+
     function saveVolcan() {
+
+        if (!editVolcanId) {
+            alert("Aucun volcan à modifier.");
+            return;
+        }
+
         const data = {
-            action: editVolcanId ? "Update_volcan" : "Add_volcan",
+            action: "Update_volcan",
+            id : editVolcanId,
             nom: document.getElementById("popup-nom").value.trim(),
             lieu: document.getElementById("popup-lieu").value.trim(),
             altitude: document.getElementById("popup-altitude").value.trim(),
             latitude: document.getElementById("popup-latitude").value.trim(),
             longitude: document.getElementById("popup-longitude").value.trim(),
-            pays: document.getElementById("popup-pays").value // Ajout de la clé pays
+            pays: editVolcanPaysId  // Ajout de la clé pays
         };
-
-        if (editVolcanId) {
-            data.id = editVolcanId;
-        }
 
         $.ajax({
             type: "POST",
@@ -211,15 +224,19 @@ document.addEventListener("DOMContentLoaded", function () {
     function deleteVolcan(id) {
         if (!confirm("Voulez-vous vraiment supprimer ce volcan ?")) return;
 
+        // Préparer les données à envoyer dans le corps de la requête
+        const data = JSON.stringify({ id: id });
+
         $.ajax({
-            type: "POST",
+            type: "DELETE",
             dataType: "json",
             url: BASE_URL,
-            data: { action: "Delete_volcan", id: id },
+            contentType: "application/json",  // Indiquer que les données sont en JSON
+            data: data,  // Passer les données JSON dans le corps de la requête
             success: function (response) {
                 if (response.status === "success") {
                     alert("Volcan supprimé !");
-                    fetchVolcans();
+                    fetchVolcans();  // Recharger la liste des volcans après la suppression
                 } else {
                     alert("Erreur : " + response.message);
                 }
@@ -238,46 +255,6 @@ document.addEventListener("DOMContentLoaded", function () {
     countrySelect.addEventListener("change", () => {
         afficherVolcans(searchInput.value, countrySelect.value);
     });
-
-
-    // let volcans = [
-    //     { nom: "Etna", pays: "Italie", lieu: "Sicile", altitude: "3,357m", latitude: "37.75", longitude: "15.00" },
-    //     { nom: "Merapi", pays: "Indonésie", lieu: "Java", altitude: "2,930m", latitude: "-7.54", longitude: "110.44" },
-    //     { nom: "Piton de la Fournaise", pays: "France", lieu: "Réunion", altitude: "2,632m", latitude: "-21.23", longitude: "55.71" },
-    //     { nom: "Stromboli", pays: "Italie", lieu: "Îles Éoliennes", altitude: "924m", latitude: "38.79", longitude: "15.21" }
-    // ];
-
-    // function afficherVolcans(filtreNom = "", filtrePays = "") {
-    //     volcanList.innerHTML = "";
-
-    //     let filtered = volcans.filter(volcan => 
-    //         (filtreNom === "" || volcan.nom.toLowerCase().includes(filtreNom.toLowerCase())) &&
-    //         (filtrePays === "" || volcan.pays === filtrePays)
-    //     );
-
-    //     filtered.forEach(volcan => {
-    //         let volcanCard = document.createElement("div");
-    //         volcanCard.classList.add("volcan-card");
-
-    //         volcanCard.innerHTML = `
-    //             <h3>${volcan.nom}</h3>
-    //             <p><strong>Lieu :</strong> ${volcan.lieu}</p>
-    //             <p><strong>Altitude :</strong> ${volcan.altitude}</p>
-    //             <p><strong>Latitude :</strong> ${volcan.latitude}</p>
-    //             <p><strong>Longitude :</strong> ${volcan.longitude}</p>
-    //         `;
-
-    //         volcanList.appendChild(volcanCard);
-    //     });
-    // }
-
-    // searchInput.addEventListener("input", () => {
-    //     afficherVolcans(searchInput.value, countrySelect.value);
-    // });
-
-    // countrySelect.addEventListener("change", () => {
-    //     afficherVolcans(searchInput.value, countrySelect.value);
-    // });
 
     //----------------login----------------
 
@@ -304,7 +281,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (response.status === "success") {
                     alert("Connexion réussie !");
                     sessionStorage.setItem("isLoggedIn", "true");
-
+                    isLoggedIn = true;
                     // Disable and hide fields after login
                     adminInput.readOnly = true;
                     passwordInput.style.display = "none";
@@ -321,6 +298,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 errorMessage.style.display = "block";
             }
         });
+        afficherVolcans();
     }
 
     function logout() {
@@ -332,6 +310,9 @@ document.addEventListener("DOMContentLoaded", function () {
         passwordInput.style.display = "inline-block";
         loginBtn.disabled = false;
         logoutBtn.disabled = true;
+        isLoggedIn = false;
+
+        afficherVolcans();
     }
 
     loginBtn.addEventListener("click", login);
