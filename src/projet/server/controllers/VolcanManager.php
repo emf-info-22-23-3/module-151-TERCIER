@@ -2,39 +2,6 @@
 class VolcanManager
 {
     private $volcanBDManager;
-
-    public function __construct()
-    {
-        $this->volcanBDManager = new VolcanBDManager();
-    }
-
-    public function getAllVolcans()
-    {
-        return $this->volcanBDManager->readVolcans();
-    }
-
-    public function addVolcan($volcan)
-    {
-        return $this->volcanBDManager->addVolcan( $volcan);
-    }
-
-    public function modifyExistingVolcan($pk, $volcan)
-    {
-        return $this->volcanBDManager->modifyVolcan($pk, $volcan);
-    }
-
-    public function deleteVolcanById($pk)
-    {
-        return $this->volcanBDManager->deleteVolcan($pk);
-    }
-}
-
-/*<?php
-include_once(__DIR__ . '/../controllers/SessionManager.php'); // Assurez-vous d'inclure SessionManager
-
-class VolcanManager
-{
-    private $volcanBDManager;
     private $sessionManager;
 
     public function __construct()
@@ -62,9 +29,9 @@ class VolcanManager
         return $this->volcanBDManager->readVolcans();
     }
 
-    public function addNewVolcan($auteur, $volcan)
+    public function addVolcan( $volcan)
     {
-        return $this->handleRequest(fn() => $this->volcanBDManager->addVolcan($auteur, $volcan));
+        return $this->handleRequest(fn() => $this->volcanBDManager->addVolcan( $volcan));
     }
 
     public function modifyExistingVolcan($pk, $volcan)
@@ -76,8 +43,8 @@ class VolcanManager
     {
         return $this->handleRequest(fn() => $this->volcanBDManager->deleteVolcan($pk));
     }
-}
-?>
-*/
+}/*
+?>*/
+
 
 ?>

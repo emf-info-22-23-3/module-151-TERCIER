@@ -119,21 +119,75 @@ if (isset($_SERVER['REQUEST_METHOD']))
 						    echo json_encode(['status' => 'error', 'message' => 'Échec de la modification du volcan']);
 						}
 						exit();
-
-				}
-			break;
+					case 'Add_volcan': // Nouveau POST pour l'ajout d'un volcan
+						// Vérifier la présence des paramètres requis
+						if (!isset($_POST['nom'], $_POST['altitude'], $_POST['latitude'], $_POST['longitude'], $_POST['pays'])) {
+							echo json_encode(['status' => 'error', 'message' => 'Paramètre(s) manquant(s)']);
+							exit();
+						}
+					
+						// Validation supplémentaire pour s'assurer que les valeurs sont correctes
+						if (!is_numeric($_POST['altitude']) || !is_numeric($_POST['latitude']) || !is_numeric($_POST['longitude']) || !is_numeric($_POST['pays'])) {
+							echo json_encode(['status' => 'error', 'message' => 'Les valeurs doivent être numériques pour altitude, latitude, longitude et pays.']);
+							exit();
+						}
+					
+						// Création de l'objet Volcan pour l'ajout
+						$volcan = new Volcan(
+							NULL,  // L'ID est auto-incrémenté dans la base
+							$_POST['nom'],
+							$_POST['altitude'],
+							$_POST['latitude'],
+							$_POST['longitude'],
+							$_POST['pays']
+						);
+					
+						// Appeler le VolcanManager pour effectuer l'ajout
+						$volcanManager = new VolcanManager();
+						$result = $volcanManager->addVolcan($volcan);  // Méthode d'ajout dans VolcanManager
+					
+						// Vérifier si l'ajout a réussi
+						if ($result) {
+							// Retourner une réponse JSON de succès
+							echo json_encode(['status' => 'success', 'message' => 'Volcan ajouté avec succès']);
+						} else {
+							// Retourner une réponse JSON d'erreur si l'ajout a échoué
+							echo json_encode(['status' => 'error', 'message' => 'Erreur lors de l\'ajout du volcan']);
+						}
+						exit();  // Terminer l'exécution pour renvoyer la réponse au client
+						break;
+					
+						
+						
+				
+						// Vous pouvez ajouter d'autres actions ici, comme la mise à jour ou la suppression des volcans
+				
+					}
+				break;
 			
 			case 'PUT':
 				// Récupérer les données envoyées en PUT
 				$input = file_get_contents('php://input');
 				$data = json_decode($input, true);
 			
+				// Vérifier que les données sont valides
+				if (json_last_error() !== JSON_ERROR_NONE) {
+					echo json_encode(['status' => 'error', 'message' => 'Données JSON malformées.']);
+					exit();
+				}
+
 				// Vérifier si toutes les données requises sont présentes
 				if (!isset($data['nom'], $data['altitude'], $data['latitude'], $data['longitude'], $data['pays'])) {
 					echo json_encode(['status' => 'error', 'message' => 'Paramètre(s) manquant(s)']);
 					exit();
 				}
 			
+				// Vérification supplémentaire : s'assurer que les valeurs sont correctes
+				if (!is_numeric($data['altitude']) || !is_numeric($data['latitude']) || !is_numeric($data['longitude']) || !is_numeric($data['pays'])) {
+					echo json_encode(['status' => 'error', 'message' => 'Les valeurs doivent être numériques pour altitude, latitude, longitude et pays.']);
+					exit();
+				}
+				
 				// Création de l'objet Volcan
 				$volcan = new Volcan(
 					null,  // L'ID est auto-incrémenté dans la base

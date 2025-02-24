@@ -7,7 +7,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const adminInput = document.getElementById("admin");
     const passwordInput = document.getElementById("password");
     const errorMessage = document.getElementById("error-message");
-    const BASE_URL = "http://127.0.0.1:8080/projet/server/server.php"
+    const BASE_URL2= "http://127.0.0.1:8080/projet/server/server.php"
+    const BASE_URL = "http://localhost:8080/projet/server/server.php"
+    
     let volcans = [];
     let pays = [];
     let paysMap = {};
@@ -20,18 +22,18 @@ document.addEventListener("DOMContentLoaded", function () {
     let editVolcanPaysId = null; // Variable pour stocker l'ID du pays
     let isLoggedIn;
 
-    function toggleAddVolcanButton() {
+    /*function toggleAddVolcanButton() {
         // Afficher ou masquer le bouton Ajouter un volcan en fonction de l'état de connexion
         if (isLoggedIn) {
             
         } else {
             
         }
-    }
+    }*/
 
     function showPopup(volcan = null) {
         popup.style.display = "flex";
-    
+
         if (volcan) {
             popupTitle.textContent = "Modifier le volcan";
             popupSave.textContent = "Enregistrer";
@@ -51,10 +53,10 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("popup-latitude").value = "";
             document.getElementById("popup-longitude").value = "";
             editVolcanId = null; // Réinitialiser l'ID pour une nouvelle création
-            editVolcanPaysId = null; // Réinitialiser l'ID du pays pour une nouvelle création
+            //editVolcanPaysId = Object.keys(paysMap).find(key => paysMap[key] === volcan.pays); // Réinitialiser l'ID du pays pour une nouvelle création
         }
     }
-    
+
 
     function hidePopup() {
         popup.style.display = "none";
@@ -71,14 +73,14 @@ document.addEventListener("DOMContentLoaded", function () {
             data: { action: "Get_volcans" },
             success: function (response) {
                 console.log("Réponse des volcans reçue : ", response);  // Debug
-                if (Array.isArray(response)) { 
+                if (Array.isArray(response)) {
                     volcans = response.map(volcan => ({
-                        id: volcan.pk_Volcan,  
+                        id: volcan.pk_Volcan,
                         nom: volcan.nom,
                         altitude: volcan.altitude,
                         latitude: volcan.latitude,
                         longitude: volcan.longitude,
-                        pays: paysMap[volcan.pk_Pays] || "Inconnu" 
+                        pays: paysMap[volcan.pk_Pays] || "Inconnu"
                     }));
                     console.log("Volcans après mapping : ", volcans);  // Debug
                     afficherVolcans();  // Appel pour afficher les volcans après récupération
@@ -92,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-    
+
 
     function fetchPays() {
         $.ajax({
@@ -167,18 +169,18 @@ document.addEventListener("DOMContentLoaded", function () {
                     editVolcanId = volcan.id;  // Remplir editVolcanId avec l'ID du volcan à modifier
                     showPopup(volcan); // Afficher le popup pour modifier ce volcan
                 };
-            
+
                 addVolcanBtn.style.display = "block";  // Afficher le bouton si l'utilisateur est connecté
 
                 let deleteBtn = document.createElement("button");
                 deleteBtn.textContent = "Supprimer";
                 deleteBtn.classList.add("button", "delete-btn"); // Ajout des classes CSS
                 deleteBtn.onclick = () => deleteVolcan(volcan.id);
-            
+
                 volcanCard.appendChild(modifyBtn);
                 volcanCard.appendChild(deleteBtn);
             }
-            
+
 
             volcanList.appendChild(volcanCard);
         });
@@ -199,13 +201,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const data = {
             action: "Update_volcan",
-            id : editVolcanId,
+            id: editVolcanId,
             nom: document.getElementById("popup-nom").value.trim(),
             lieu: document.getElementById("popup-lieu").value.trim(),
             altitude: document.getElementById("popup-altitude").value.trim(),
             latitude: document.getElementById("popup-latitude").value.trim(),
             longitude: document.getElementById("popup-longitude").value.trim(),
-            pays: Object.keys(paysMap).find(key => paysMap[key] === volcan.pays)  // Ajout de la clé pays
+            pays: Object.keys(paysMap).find(key => paysMap[key] === document.getElementById("popup-lieu").value)
+            // Ajout de la clé pays
         };
 
         $.ajax({
@@ -215,7 +218,7 @@ document.addEventListener("DOMContentLoaded", function () {
             data: data,
             success: function (response) {
                 if (response.status === "success") {
-                    alert(editVolcanId ? "Volcan modifié !" : "Volcan ajouté !");
+                    alert("Volcan modifié !");
                     fetchVolcans();
                     closePopup();
                 } else {
@@ -229,8 +232,11 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    popupSave.addEventListener("click", function() {
-        if (popupSave.textContent === "Modifier le volcan") {
+
+    //popupSave.addEventListener("click", saveVolcan);
+
+    popupSave.addEventListener("click", function () {
+        if (popupSave.textContent == "Enregistrer") {
             saveVolcan();  // Appelle la fonction saveVolcan() si le texte est "Modifier le volcan"
         } else {
             addVolcan();   // Sinon, appelle la fonction addVolcan()
@@ -275,42 +281,168 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function addVolcan() {
-        const data = {
-            nom: document.getElementById("popup-nom").value.trim(),
-            altitude: document.getElementById("popup-altitude").value.trim(),
-            latitude: document.getElementById("popup-latitude").value.trim(),
-            longitude: document.getElementById("popup-longitude").value.trim(),
-            pays: editVolcanPaysId // ID du pays sélectionné
-        };
+        const addButton = document.getElementById("popup-save");
+        addButton.disabled = true; // Désactiver le bouton d'ajout
     
-        if (!data.nom || !data.altitude || !data.latitude || !data.longitude || !data.pays) {
+        const nom = document.getElementById("popup-nom").value.trim();
+        const altitude = parseFloat(document.getElementById("popup-altitude").value.trim());
+        const latitude = parseFloat(document.getElementById("popup-latitude").value.trim());
+        const longitude = parseFloat(document.getElementById("popup-longitude").value.trim());
+        const pays = document.getElementById("popup-lieu").value.trim();
+    
+        // Validation des champs
+        if (!nom || !altitude || !latitude || !longitude || !pays) {
             alert("Tous les champs doivent être remplis.");
+            addButton.disabled = false; // Réactiver le bouton
             return;
         }
     
-        // Envoi de la requête PUT pour ajouter un volcan
+        if (isNaN(altitude) || isNaN(latitude) || isNaN(longitude)) {
+            alert("Les champs altitude, latitude et longitude doivent être des nombres.");
+            addButton.disabled = false; // Réactiver le bouton
+            return;
+        }
+    
+        const paysId = Object.keys(paysMap).find(key => paysMap[key] === pays);
+        if (!paysId) {
+            alert("Veuillez sélectionner un pays valide.");
+            addButton.disabled = false; // Réactiver le bouton
+            return;
+        }
+    
+        const data = {
+            action: "Add_volcan",  // Ajout de l'action pour l'API
+            nom,
+            altitude,
+            latitude,
+            longitude,
+            pays: parseInt(paysId)
+        };
+    
+        console.log("Données envoyées :", data);
+    
+        // Envoi de la requête AJAX (avec POST)
         $.ajax({
-            type: "PUT",
-            dataType: "json",
-            url: BASE_URL,
-            contentType: "application/json",  // Indiquer que les données sont en JSON
-            data: JSON.stringify(data),  // Convertir les données en JSON
-            success: function(response) {
-                if (response.status === "success") {
-                    alert("Volcan ajouté avec succès !");
-                    fetchVolcans();  // Recharger les volcans
-                    hidePopup();  // Fermer le popup
-                } else {
-                    alert("Erreur : " + response.message);
+            type: "POST",  // Changement de PUT à POST
+            url: BASE_URL,  // Utilisation de la même URL
+            contentType: "application/json",
+            data: JSON.stringify(data),  // Les données envoyées en JSON
+            success: function (response) {
+                console.log("Réponse brute du serveur :", response);  // Afficher la réponse brute
+                console.log("Type de la réponse :", typeof response); // Vérifier si c'est une chaîne ou un objet
+            
+                try {
+                    const responseObject = JSON.parse(response);
+                    console.log("Réponse convertie en objet :", responseObject);
+                    
+                    if (responseObject.status === "success") {
+                        alert("Volcan ajouté avec succès !");
+                        fetchVolcans();
+                        hidePopup();
+                    } else {
+                        alert("Erreur : " + (responseObject.message || "Réponse invalide"));
+                    }
+                } catch (e) {
+                    console.error("Erreur lors du parsing de la réponse JSON :", e);
+                    alert("Une erreur est survenue lors de la récupération des données.");
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error("Erreur AJAX:", status, error);
-                alert("Une erreur est survenue : " + error);
+            
+                addButton.disabled = false;  // Réactiver le bouton après traitement
+            },            
+            error: function (xhr, status, error) {
+                console.error("Erreur AJAX:", status, error, xhr.responseText);
+                try {
+                    const errorResponse = JSON.parse(xhr.responseText);
+                    alert("Une erreur est survenue : " + errorResponse.message);
+                } catch (e) {
+                    alert("Une erreur est survenue : " + xhr.responseText);
+                }
+                addButton.disabled = false; // Réactiver le bouton après traitement
             }
         });
     }
     
+
+    /*function addVolcan() {
+        const addButton = document.getElementById("popup-save");
+        addButton.disabled = true; // Désactiver le bouton d'ajout
+    
+        const nom = document.getElementById("popup-nom").value.trim();
+        const altitude = parseFloat(document.getElementById("popup-altitude").value.trim());
+        const latitude = parseFloat(document.getElementById("popup-latitude").value.trim());
+        const longitude = parseFloat(document.getElementById("popup-longitude").value.trim());
+        const pays = document.getElementById("popup-lieu").value.trim();
+    
+        // Validation des champs
+        if (!nom || !altitude || !latitude || !longitude || !pays) {
+            alert("Tous les champs doivent être remplis.");
+            addButton.disabled = false; // Réactiver le bouton
+            return;
+        }
+    
+        if (isNaN(altitude) || isNaN(latitude) || isNaN(longitude)) {
+            alert("Les champs altitude, latitude et longitude doivent être des nombres.");
+            addButton.disabled = false; // Réactiver le bouton
+            return;
+        }
+    
+        const paysId = Object.keys(paysMap).find(key => paysMap[key] === pays);
+        if (!paysId) {
+            alert("Veuillez sélectionner un pays valide.");
+            addButton.disabled = false; // Réactiver le bouton
+            return;
+        }
+    
+        const data = {
+            nom,
+            altitude,
+            latitude,
+            longitude,
+            pays: parseInt(paysId)
+        };
+    
+        console.log("Données envoyées :", data);
+    
+        // Envoi de la requête AJAX
+        $.ajax({
+            type: "PUT",
+            url: BASE_URL,
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function (response) {
+                console.log("Réponse du serveur :", response);
+                if (response.status === "success") {
+                    alert("Volcan ajouté avec succès !");
+                    fetchVolcans();
+                    hidePopup();
+                } else {
+                    alert("Erreur : " + response.message);
+                }
+                addButton.disabled = false; // Réactiver le bouton après traitement
+            },
+            error: function (xhr, status, error) {
+                console.error("Erreur AJAX:", status, error, xhr.responseText);
+                alert("Une erreur est survenue : " + xhr.responseText);
+                addButton.disabled = false; // Réactiver le bouton après traitement
+            }
+        });
+    }*/
+    
+
+    function showErrorMessage(message) {
+        const errorElement = document.getElementById('error-message');
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+    }
+    
+    function hideErrorMessage() {
+        const errorElement = document.getElementById('error-message');
+        errorElement.style.display = 'none';
+    }
+    
+    
+    
+
 
     //----------------login----------------
 
@@ -338,14 +470,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert("Connexion réussie !");
                     sessionStorage.setItem("isLoggedIn", "true");
                     isLoggedIn = true;
-                    
+
                     // Disable and hide fields after login
                     adminInput.readOnly = true;
                     passwordInput.style.display = "none";
                     loginBtn.disabled = true;
                     logoutBtn.disabled = false;
                     errorMessage.style.display = "none"; // Hide error message on success
-                    
+
                 } else {
                     errorMessage.textContent = response.message || "Nom d'utilisateur ou mot de passe incorrect.";
                     errorMessage.style.display = "block";
@@ -357,7 +489,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 errorMessage.style.display = "block";
             }
         });
-        
+
     }
 
     function logout() {
@@ -390,5 +522,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
     afficherVolcans();
     // Initialisation du bouton "Ajouter un volcan" au chargement de la page
-    toggleAddVolcanButton();
+    //toggleAddVolcanButton();
 });

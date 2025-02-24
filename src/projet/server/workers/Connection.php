@@ -41,11 +41,35 @@ class Connection {
         }
     }
 
-    public function executeQuery($query, $params = []) {
+    /*public function executeQuery($query, $params = []) {
         try {
             $stmt = $this->pdo->prepare($query);
             return $stmt->execute($params);
         } catch (PDOException $e) {
+            error_log("Erreur SQL : " . $e->getMessage());
+            return false;
+        }
+    }*/
+
+    public function executeQuery($query, $params = [])
+    {
+        try {
+            $stmt = $this->pdo->prepare($query);
+            
+            // Exécution de la requête
+            $success = $stmt->execute($params);
+            
+            // Vérification des erreurs après exécution
+            if (!$success) {
+                // Si l'exécution échoue, récupérer l'erreur SQL
+                $errorInfo = $stmt->errorInfo();
+                error_log("Erreur SQL : " . $errorInfo[2]); // Afficher l'erreur détaillée
+                return false;
+            }
+            
+            return $success;
+        } catch (PDOException $e) {
+            // Log l'exception avec les détails
             error_log("Erreur SQL : " . $e->getMessage());
             return false;
         }

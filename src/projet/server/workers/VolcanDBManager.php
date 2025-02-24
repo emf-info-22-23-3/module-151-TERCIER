@@ -29,6 +29,7 @@ class VolcanBDManager
                 $data['FK_pays']
             );
         }
+		
         return $volcans;
     }
 
@@ -42,16 +43,6 @@ class VolcanBDManager
 	{
 	    $connection = new Connection();
 
-	    // Vérifier que tous les paramètres sont valides
-	    if (empty($volcan->getNom()) || 
-	        !is_numeric($volcan->getAltitude()) || 
-	        !is_numeric($volcan->getLatitude()) || 
-	        !is_numeric($volcan->getLongitude()) || 
-	        !is_numeric($volcan->getPkPays())) {
-			
-	        return json_encode(['status' => 'error', 'message' => 'Paramètres invalides']);
-	    }
-
 	    // Vérifier si un volcan avec le même nom et coordonnées existe déjà
 	    $checkSql = "SELECT COUNT(*) as count FROM t_volcan 
 	                 WHERE nom = ? AND latitude = ? AND longitude = ?";
@@ -62,7 +53,8 @@ class VolcanBDManager
 	    ]);
 
 	    if ($existing[0]['count'] > 0) {
-	        return json_encode(['status' => 'error', 'message' => 'Ce volcan existe déjà']);
+			echo('test2');
+	        return false;
 	    }
 
 	    // Insertion du volcan
@@ -76,13 +68,26 @@ class VolcanBDManager
 	        (int) $volcan->getPkPays()
 	    ];
 
-	    $inserted = $connection->executeQuery($sql, $params);
-
-	    if ($inserted) {
-	        return json_encode(['status' => 'success', 'message' => 'Volcan ajouté avec succès']);
-	    } else {
-	        return json_encode(['status' => 'error', 'message' => 'Erreur lors de l\'ajout du volcan']);
-	    }
+	    try {
+			// Affichage des paramètres pour le debug
+			//echo('SQL: ' . $sql);
+			//echo('<br />Params: ' . print_r($params, true));  // Utilisation de print_r pour afficher le tableau
+	
+			$result = $connection->executeQuery($sql, $params);
+			echo('Résultat de l\'exécution: ' . $result);
+	
+			if ($result) {
+				return json_encode(['status' => 'success', 'message' => 'Volcan ajouté avec succès']);
+			} else {
+				return json_encode(['status' => 'error', 'message' => 'Erreur lors de l\'ajout']);
+			}
+		} catch (Exception $e) {
+			// Affichage de l'erreur
+			echo "Erreur: " . $e->getMessage();
+			var_dump($e->getMessage()); // Affiche l'erreur SQL si elle existe
+			return false;
+		}
+	    
 	}
 
 
@@ -95,6 +100,7 @@ class VolcanBDManager
     public function modifyVolcan($pk, $volcan)
 	{
 	    if (!$pk || !$volcan instanceof Volcan) {
+			
 	        return false; // Vérifie que l'ID est valide et que $volcan est un objet Volcan
 	    }
 
@@ -117,8 +123,11 @@ class VolcanBDManager
 	    ];
 
 	    try {
+			//echo('test5');
         	return $connection->executeQuery($sql, $params);
+			
     	} catch (Exception $e) {
+			//echo('test6');
     	    json_encode('Error executing query: ' . $e->getMessage());
     	    return false;
     	}
