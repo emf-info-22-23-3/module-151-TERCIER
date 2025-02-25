@@ -1,9 +1,21 @@
 <?php
-include_once(__DIR__ . '/configConnection.php'); 
+/**
+ * Classe Connection
+ *
+ * Gère la connexion à la base de données et l'exécution des requêtes SQL.
+ */
+include_once(__DIR__ . '/configConnection.php');
 
 class Connection {
+    /**
+     * Instance de l'objet PDO pour la connexion à la base de données.
+     * @var PDO
+     */
     private $pdo;
 
+    /**
+     * Constructeur : Initialise la connexion à la base de données.
+     */
     public function __construct() {
         try {
             $this->pdo = new PDO(
@@ -19,6 +31,13 @@ class Connection {
         }
     }
 
+    /**
+     * Exécute une requête SELECT et retourne plusieurs résultats.
+     *
+     * @param string $query Requête SQL à exécuter.
+     * @param array $params Paramètres pour la requête préparée.
+     * @return array Résultats sous forme de tableau associatif.
+     */
     public function selectQuery($query, $params = []) {
         try {
             $stmt = $this->pdo->prepare($query);
@@ -30,6 +49,13 @@ class Connection {
         }
     }
 
+    /**
+     * Exécute une requête SELECT et retourne un seul résultat.
+     *
+     * @param string $query Requête SQL à exécuter.
+     * @param array $params Paramètres pour la requête préparée.
+     * @return array|false Résultat sous forme de tableau associatif ou false en cas d'erreur.
+     */
     public function selectQuerySingleReturn($query, $params = []) {
         try {
             $stmt = $this->pdo->prepare($query);
@@ -40,19 +66,15 @@ class Connection {
             return [];
         }
     }
-
-    /*public function executeQuery($query, $params = []) {
-        try {
-            $stmt = $this->pdo->prepare($query);
-            return $stmt->execute($params);
-        } catch (PDOException $e) {
-            error_log("Erreur SQL : " . $e->getMessage());
-            return false;
-        }
-    }*/
-
-    public function executeQuery($query, $params = [])
-    {
+    
+    /**
+     * Exécute une requête SQL (INSERT, UPDATE, DELETE) et retourne le succès de l'opération.
+     *
+     * @param string $query Requête SQL à exécuter.
+     * @param array $params Paramètres pour la requête préparée.
+     * @return bool Succès ou échec de l'opération.
+     */
+    public function executeQuery($query, $params = []) {
         try {
             $stmt = $this->pdo->prepare($query);
             
@@ -75,6 +97,11 @@ class Connection {
         }
     }
 
+    /**
+     * Retourne l'identifiant du dernier enregistrement inséré.
+     *
+     * @return string Identifiant du dernier enregistrement inséré.
+     */
     public function getLastInsertId() {
         return $this->pdo->lastInsertId();
     }

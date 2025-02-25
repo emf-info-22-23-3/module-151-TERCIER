@@ -2,8 +2,7 @@
   /**
   * Classe Login
   *
-  * Cette classe représente un Login.
-  *
+  * Cette classe représente un Login avec une clé primaire et un nom.
   */
   class Login
   {
@@ -13,8 +12,9 @@
     * @var string
     */
     private $nom;
+    
     /**
-    * Variable représentant la pk du Login
+    * Variable représentant la clé primaire (PK) du Login
     * @access private
     * @var integer
     */
@@ -23,9 +23,10 @@
     /**
     * Constructeur de la classe Login
     *
-    * @param int $pk_login. PK du login
-    * @param string nom. Nom du login
-    * @param int $dossardCoureur. Numéro de dossard du coureur
+    * Initialise un objet Login avec une clé primaire et un nom.
+    *
+    * @param int $pk_login Clé primaire du login
+    * @param string $nom Nom du login
     */
     public function __construct($pk_login, $nom)
     {
@@ -34,9 +35,11 @@
     }
     
     /**
-    * Fonction qui retourne le nom du login.
+    * Retourne le nom du login.
     *
-    * @return nom du login.
+    * Cette méthode permet d'accéder à la propriété privée $nom.
+    *
+    * @return string Nom du login.
     */
     public function getNom()
     {
@@ -44,14 +47,15 @@
     }
     
     /**
-    * Fonction qui retourne la pk du login.
+    * Retourne la clé primaire du login.
     *
-    * @return pk du login.
+    * Cette méthode permet d'accéder à la propriété privée $pk_login.
+    *
+    * @return int Clé primaire du login.
     */
     public function getPklogin()
     {
       return $this->pk_login;
     }
-    
   }
 ?>

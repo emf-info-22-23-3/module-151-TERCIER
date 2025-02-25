@@ -2,48 +2,48 @@
   /**
   * Classe Volcan
   *
-  * Cette classe représente un Volcan.
+  * Cette classe représente un Volcan avec ses caractéristiques principales.
   *
   */
   class Volcan
   {
     /**
-    * Variable représentant le nom du Volcan
+    * Nom du Volcan
     * @access private
     * @var string
     */
     private $nom;
     
     /**
-    * Variable représentant la pk du Volcan
+    * Identifiant unique du Volcan
     * @access private
     * @var integer
     */
     private $pk_Volcan;
 
     /**
-    * Variable représentant l'altitude du Volcan
+    * Altitude du Volcan en mètres
     * @access private
     * @var float
     */
     private $altitude;
 
     /**
-    * Variable représentant la latitude du Volcan
+    * Latitude du Volcan
     * @access private
     * @var float
     */
     private $latitude;
 
     /**
-    * Variable représentant la longitude du Volcan
+    * Longitude du Volcan
     * @access private
     * @var float
     */
     private $longitude;    
 
     /**
-    * Variable représentant la pk du pays du Volcan
+    * Identifiant du pays où se situe le Volcan
     * @access private
     * @var integer
     */
@@ -51,6 +51,8 @@
 
     /**
      * Constructeur de la classe Volcan
+     *
+     * Initialise un objet Volcan avec ses attributs.
      *
      * @param int    $pk_Volcan Identifiant unique du volcan
      * @param string $nom Nom du volcan
@@ -69,66 +71,91 @@
         $this->pk_Pays = $pk_Pays;
     }
     
-    /** @return string Nom du volcan */
+    /**
+    * Retourne le nom du volcan.
+    *
+    * @return string Nom du volcan
+    */
     public function getNom()
     {
         return $this->nom;
     }
 
-    /** @return int Identifiant du volcan */
+    /**
+    * Retourne l'identifiant unique du volcan.
+    *
+    * @return int Identifiant du volcan
+    */
     public function getPkVolcan()
     {
         return $this->pk_Volcan;
     }
 
-    /** @return float Altitude du volcan */
+    /**
+    * Retourne l'altitude du volcan en mètres.
+    *
+    * @return float Altitude du volcan
+    */
     public function getAltitude()
     {
         return $this->altitude;
     }
 
-    /** @return float Latitude du volcan */
+    /**
+    * Retourne la latitude du volcan.
+    *
+    * @return float Latitude du volcan
+    */
     public function getLatitude()
     {
         return $this->latitude;
     }
 
-    /** @return float Longitude du volcan */
+    /**
+    * Retourne la longitude du volcan.
+    *
+    * @return float Longitude du volcan
+    */
     public function getLongitude()
     {
         return $this->longitude;
     }
 
-    /** @return int Identifiant du pays */
+    /**
+    * Retourne l'identifiant du pays où se situe le volcan.
+    *
+    * @return int Identifiant du pays
+    */
     public function getPkPays()
     {
         return $this->pk_Pays;
     }
 
     /**
-     * Méthode __toString pour convertir l'objet Volcan en chaîne
-     * Cela vous permet d'utiliser l'objet dans des contextes où une chaîne est attendue.
-     * Exemple: insertion dans une requête SQL.
+     * Convertit l'objet Volcan en une chaîne de caractères.
+     *
+     * @return string Nom du volcan
      */
     public function __toString() {
-        return $this->nom; // Vous pouvez retourner un autre attribut ou une combinaison d'attributs si nécessaire
+        return $this->nom; 
     }
 
     /**
-    * Fonction qui retourne le contenu du bean Volcan au format XML
-    * @return string Le contenu du bean au format XML
+    * Retourne le contenu du bean Volcan au format XML.
+    * 
+    * @return string Représentation XML du volcan
     */
     public function toXML()
     {
-        $result = '<Volcan>';
-        $result .= '<pk_Volcan>' . $this->getPkVolcan() . '</pk_Volcan>';
-        $result .= '<nom>' . $this->getNom() . '</nom>';
-        $result .= '<altitude>' . $this->getAltitude() . '</altitude>';
-        $result .= '<latitude>' . $this->getLatitude() . '</latitude>';
-        $result .= '<longitude>' . $this->getLongitude() . '</longitude>';
-        $result .= '<pk_Pays>' . $this->getPkPays() . '</pk_Pays>';
-        $result .= '</Volcan>';
-        return $result;
+        $xml = "<volcan>";
+        $xml .= "<id>" . $this->pk_Volcan . "</id>";
+        $xml .= "<nom>" . $this->nom . "</nom>";
+        $xml .= "<altitude>" . $this->altitude . "</altitude>";
+        $xml .= "<latitude>" . $this->latitude . "</latitude>";
+        $xml .= "<longitude>" . $this->longitude . "</longitude>";
+        $xml .= "<pays>" . $this->pk_Pays . "</pays>";
+        $xml .= "</volcan>";
+        return $xml;
     }
   }
 ?>
