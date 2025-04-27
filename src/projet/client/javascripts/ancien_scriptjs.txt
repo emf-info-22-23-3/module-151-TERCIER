@@ -22,15 +22,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let editVolcanPaysId = null; // Variable pour stocker l'ID du pays
     let isLoggedIn;
 
-    /*function toggleAddVolcanButton() {
-        // Afficher ou masquer le bouton Ajouter un volcan en fonction de l'état de connexion
-        if (isLoggedIn) {
-            
-        } else {
-            
-        }
-    }*/
-
     function showPopup(volcan = null) {
         popup.style.display = "flex";
 

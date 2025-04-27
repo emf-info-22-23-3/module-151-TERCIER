@@ -14,55 +14,72 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
     // Switch basé sur la méthode HTTP (GET, POST, PUT, DELETE)
     switch ($_SERVER['REQUEST_METHOD']) {
         case 'GET':
-            // Initialisation de la réponse sous forme de tableau
             $response = array();
-            
-            // Si l'action demandée est 'Get_volcans', récupérer tous les volcans
-            if (isset($_GET['action']) && $_GET['action'] === 'Get_volcans') {
-                $VolcanManager = new VolcanManager();
-                $volcans = $VolcanManager->getAllVolcans();
-                
-                // Formatage des volcans dans un tableau de réponse
-                foreach ($volcans as $volcan) {
-                    $response[] = array(
-                        'pk_Volcan' => $volcan->getPkVolcan(),
-                        'nom' => $volcan->getNom(),
-                        'altitude' => $volcan->getAltitude(),
-                        'latitude' => $volcan->getLatitude(),
-                        'longitude' => $volcan->getLongitude(),
-                        'pk_Pays' => $volcan->getPkPays()
-                    );
-                }
-                // Retourner la réponse au format JSON
-                echo json_encode($response);
-                break;
-            }
-            
-            // Si l'action demandée est 'Get_pays', récupérer tous les pays
-            if (isset($_GET['action']) && $_GET['action'] === 'Get_pays') {
-                $paysManager = new PaysManager();
-                $paysList = $paysManager->getAllPays();
-                
-                // Si la liste des pays est vide, retourner un tableau vide
-                if (empty($paysList)) {
-                    echo json_encode([]);
-                } else {
-                    $paysArray = [];
-                    foreach ($paysList as $pays) {
-                        $paysArray[] = [
-                            'pk_Pays' => $pays->getPkPays(),
-                            'nom' => $pays->getNom()
-                        ];
+        
+            if (isset($_GET['action'])) {
+                if ($_GET['action'] === 'Get_volcans') {
+                    $VolcanManager = new VolcanManager();
+                    $volcans = $VolcanManager->getAllVolcans();
+        
+                    foreach ($volcans as $volcan) {
+                        $response[] = array(
+                            'pk_Volcan' => $volcan->getPkVolcan(),
+                            'nom' => $volcan->getNom(),
+                            'altitude' => $volcan->getAltitude(),
+                            'latitude' => $volcan->getLatitude(),
+                            'longitude' => $volcan->getLongitude(),
+                            'pk_Pays' => $volcan->getPkPays()
+                        );
                     }
-                    // Retourner les pays sous forme de JSON
-                    echo json_encode($paysArray);
+                    echo json_encode($response);
+                    break;
                 }
-                break;
+        
+                if ($_GET['action'] === 'Get_pays') {
+                    $paysManager = new PaysManager();
+                    $paysList = $paysManager->getAllPays();
+        
+                    if (empty($paysList)) {
+                        echo json_encode([]);
+                    } else {
+                        $paysArray = [];
+                        foreach ($paysList as $pays) {
+                            $paysArray[] = [
+                                'pk_Pays' => $pays->getPkPays(),
+                                'nom' => $pays->getNom()
+                            ];
+                        }
+                        echo json_encode($paysArray);
+                    }
+                    break;
+                }
+        
+                if ($_GET['action'] === 'Get_volcans_filtered') {
+                    $VolcanManager = new VolcanManager();
+                    $nom = $_GET['nom'] ?? '';
+                    $pays = $_GET['pays'] ?? '';
+        
+                    $volcans = $VolcanManager->getVolcanFiltered($nom, $pays);
+        
+                    $response = [];
+                    foreach ($volcans as $volcan) {
+                        $response[] = array(
+                            'pk_Volcan' => $volcan->getPkVolcan(),
+                            'nom' => $volcan->getNom(),
+                            'altitude' => $volcan->getAltitude(),
+                            'latitude' => $volcan->getLatitude(),
+                            'longitude' => $volcan->getLongitude(),
+                            'pk_Pays' => $volcan->getPkPays()
+                        );
+                    }
+                    echo json_encode($response);
+                    break;
+                }
             }
-            
-            // Si aucune action valide n'est trouvée, retourner une erreur
+        
             echo json_encode(['error' => 'Aucune action valide spécifiée']);
             break;
+        
 
         case 'POST':
             // Décodage des données envoyées en POST (en JSON)

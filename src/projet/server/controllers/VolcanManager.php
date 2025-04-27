@@ -68,6 +68,15 @@ class VolcanManager
     }
 
     /**
+     * Récupère le volcan recherché.
+     *
+     * @return array volcan recherché.
+     */
+    public function getVolcanFiltered($nom, $pays){
+        return $this->volcanBDManager->getVolcansFiltered($nom, $pays);
+    }
+
+    /**
      * Ajoute un volcan après vérification de l'authentification.
      *
      * @param mixed $volcan Données du volcan à ajouter.
@@ -102,6 +111,6 @@ class VolcanManager
     }
 }
 
-/*?>*/
+
 
 ?>

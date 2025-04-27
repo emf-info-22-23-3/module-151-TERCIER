@@ -37,6 +37,49 @@ class VolcanBDManager
     }
 
     /**
+     * Récupère tous les parametres pour selectioner le/s volcan/s.
+     * 
+     * @return array Liste des volcans sous forme d'objets Volcan.
+     */
+     public function getVolcansFiltered($nom = '', $pays = '') {
+        $connection = new Connection();
+        
+        $sql = "
+            SELECT v.PK_volcan, v.nom AS volcan_nom, v.altitude, v.latitude, v.longitude, p.nom AS pays_nom
+            FROM t_volcan v
+            INNER JOIN t_pays p ON v.FK_pays = p.PK_pays
+            WHERE 1
+        ";
+        $params = [];
+    
+        if (!empty($nom)) {
+            $sql .= " AND v.nom LIKE ?";
+            $params[] = "%$nom%";
+        }
+    
+        if (!empty($pays)) {
+            $sql .= " AND p.PK_pays = ?";
+            $params[] = (int)$pays;
+        }
+    
+        $results = $connection->selectQuery($sql, $params);
+    
+        $volcans = [];
+        foreach ($results as $data) {
+            $volcans[] = new Volcan(
+                $data['PK_volcan'],
+                $data['volcan_nom'],
+                $data['altitude'],
+                $data['latitude'],
+                $data['longitude'],
+                $data['pays_nom']  //le nom du pays directement
+            );
+        }
+    
+        return $volcans;
+    }
+    
+    /**
      * Ajoute un volcan dans la base de données.
      * 
      * @param Volcan $volcan Objet Volcan à insérer.
