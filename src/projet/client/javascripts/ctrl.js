@@ -9,7 +9,8 @@
 
 document.addEventListener("DOMContentLoaded", async () => {
     // Initialisation
-    const BASE_URL = "http://localhost:8080/projet/server/server.php";
+    const BASE_URL = "http://localhost:8080/projet/server/server.php"; //local
+    //const BASE_URL = "http://tercierc.emf.informatique.ch/151/projet/server/server.php"; //Cpanel
     const wrk = new WrkHTTPS(BASE_URL);
 
     // Sélection des éléments DOM
