@@ -44,16 +44,17 @@
         * @return string Résultat en format JSON (succès ou échec)
         */
         public function Post_checkLogin($user, $password) {
+            
             $loginBD = new LoginBDManager();
             $bool = $loginBD->readLogins($user, $password);
-            
             if ($bool) {
                 // Connexion réussie, ouvrir une session
                 $this->sessionManager->openSession($user);
                 return json_encode(["status" => "success", "message" => "Login réussi"]);
             } else {
                 // Login échoué
-                return json_encode(["status" => "error", "message" => "Nom ou mot de passe incorrect"]);
+                $mes = "Nom ou mot de passe incorrect |/ nom : ".$user." pass : ".$password." |/ ".(int)$bool." .|";
+                return json_encode(["status" => "error", "message" => $mes]);
             }
         }
 

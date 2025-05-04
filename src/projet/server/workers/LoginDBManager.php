@@ -1,4 +1,4 @@
-<?php 
+<?php
 // Inclusion des fichiers nécessaires pour la gestion des connexions et des objets Login.
 include_once(__DIR__ . '/../workers/Connection.php');
 include_once(__DIR__ . '/../beans/Login.php');
@@ -23,28 +23,34 @@ class LoginBDManager
      */
     public function readLogins($user, $pass)
     {
-        // Création d'une nouvelle connexion à la base de données.
-        $connection = new Connection(); 
 
-        // Requête SQL pour récupérer le mot de passe haché d'un utilisateur en fonction de son nom.
-        $query = "SELECT pass FROM t_admin WHERE nom = :nom";
+        $resulte = false;
 
-        // Paramètres de la requête préparée.
-        $params = array("nom" => $user);
+        try {
+            // Création d'une nouvelle connexion à la base de données.
+            $connection = new Connection();
 
-        // Exécution de la requête et récupération du résultat sous forme de tableau associatif.
-        $result = $connection->selectQuerySingleReturn($query, $params);
+            // Requête SQL pour récupérer le mot de passe haché d'un utilisateur en fonction de son nom.
+            $query = "SELECT pass FROM bd_ProjectVolcan.t_admin WHERE nom = :nom";
 
-        // Vérification si un résultat a été trouvé.
-        if ($result) {
-            $row = $result["pass"]; // Récupération du mot de passe haché de la base.
-            
-            // Vérification du mot de passe en le comparant avec le hash stocké.
-            return password_verify($pass, $row);
+            // Paramètres de la requête préparée.
+            $params = array("nom" => $user);
+
+            // Exécution de la requête et récupération du résultat sous forme de tableau associatif.
+            $result = $connection->selectQuerySingleReturn($query, $params);
+
+            // Vérification si un résultat a été trouvé.
+            if ($result != null && isset($result["pass"])) {
+                $row = $result["pass"];
+                $resulte = password_verify($pass, $row);
+            }
+        } catch (Exception $e) {
+            // Gérer l'exception, par exemple en loggant l'erreur
+            $resulte = false;
         }
 
         // Retourne false si aucun utilisateur ne correspond ou si l'authentification échoue.
-        return false; 
+        return $resulte;
     }
 
     /**
@@ -66,7 +72,7 @@ class LoginBDManager
         $sql = "INSERT INTO t_login (auteur, login) VALUES ('" . $auteur . "','" . $login . "')";
 
         // Exécution de la requête SQL.
-        $resultat = $connection->executeQuery($sql); 
+        $resultat = $connection->executeQuery($sql);
 
         // Vérification si l'insertion s'est bien déroulée.
         if ($resultat) {
@@ -79,4 +85,3 @@ class LoginBDManager
         return $res;
     }
 }
-?>

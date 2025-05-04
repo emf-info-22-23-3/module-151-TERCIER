@@ -76,15 +76,29 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <p><strong>Longitude :</strong> ${v.longitude}</p>
             `;
             if (isLoggedIn) {
+                // Disable and hide fields after login
+                adminInput.readOnly = true;
+                passwordInput.style.display = "none";
+                loginBtn.disabled = true;
+                logoutBtn.disabled = false;
+                errorMessage.style.display = "none";
+
                 // Si connecté, ajouter les boutons modifier/supprimer
                 let mBtn = document.createElement("button");
                 mBtn.textContent = "Modifier";
+                mBtn.classList.add("button", "modify-btn"); // Ajout des classes CSS
                 mBtn.onclick = () => {
                     editVolcanId = v.id;
                     showPopup(v);
                 };
+
+                addVolcanBtn.style.display = "block";  // Afficher le bouton si l'utilisateur est connecté
+                addVolcanBtn.addEventListener("click", () => showPopup());
+                //popupClose.addEventListener("click", hidePopup);
+
                 let dBtn = document.createElement("button");
                 dBtn.textContent = "Supprimer";
+                dBtn.classList.add("button", "delete-btn"); // Ajout des classes CSS
                 dBtn.onclick = async () => {
                     if (confirm("Confirmer suppression ?")) {
                         await wrk.deleteVolcan(v.id);
@@ -158,24 +172,45 @@ document.addEventListener("DOMContentLoaded", async () => {
     loginBtn.addEventListener("click", async () => {
         const nom = adminInput.value.trim();
         const pass = passwordInput.value.trim();
-        try {
-            const res = await wrk.login(nom, pass);
-            if (res.status === "success") {
-                sessionStorage.setItem("isLoggedIn", "true");
-                isLoggedIn = true;
-                afficherVolcans();
-            } else {
-                errorMessage.textContent = res.message;
-                errorMessage.style.display = "block";
+        if(nom == null || nom == "" && pass == null || pass == ""){
+            errorMessage.textContent = "veuillez remplire tout les champs"
+            errorMessage.style.display = "block";
+        }else{
+            try {
+                const res = await wrk.login(nom, pass);
+                if (res.status === "success") {
+                    alert("Connexion réussie !");
+                    sessionStorage.setItem("isLoggedIn", "true");
+                    isLoggedIn = true;
+                    afficherVolcans();
+
+                    // Disable and hide fields after login
+                    adminInput.readOnly = true;
+                    passwordInput.style.display = "none";
+                    loginBtn.disabled = true;
+                    logoutBtn.disabled = false;
+                    errorMessage.style.display = "none";
+                } else {
+                    errorMessage.textContent = res.message;
+                    errorMessage.style.display = "block";
+                }
+            } catch {
+                errorMessage.textContent = "Erreur serveur.";
             }
-        } catch {
-            errorMessage.textContent = "Erreur serveur.";
+            
         }
     });
 
     // Gestion du logout
     logoutBtn.addEventListener("click", () => {
         sessionStorage.removeItem("isLoggedIn");
+        adminInput.readOnly = false;
+        adminInput.textContent = "";
+        passwordInput.style.display = "inline-block";
+        passwordInput.textContent = "";
+        loginBtn.disabled = false;
+        logoutBtn.disabled = true;
+        addVolcanBtn.style.display = "none";
         isLoggedIn = false;
         afficherVolcans();
     });

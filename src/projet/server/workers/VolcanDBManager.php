@@ -174,11 +174,13 @@ class VolcanBDManager
      */
     public function deleteVolcan($pk)
     {
+        $retour = ""; 
+
         $connection = new Connection();
 
         // Vérifier que l'ID est bien un entier positif
         if (!is_numeric($pk) || (int)$pk <= 0) {
-            return json_encode(['status' => 'error', 'message' => 'ID invalide']);
+            $retour =  json_encode(['status' => 'error', 'message' => 'ID invalide']);
         }
 
         // Vérifier si le volcan existe avant de supprimer
@@ -186,7 +188,7 @@ class VolcanBDManager
         $result = $connection->selectQuery($checkSql, [(int) $pk]);
 
         if ($result[0]['count'] == 0) {
-            return json_encode(['status' => 'error', 'message' => 'Le volcan n\'existe pas']);
+            $retour =  json_encode(['status' => 'error', 'message' => 'Le volcan n\'existe pas']);
         }
 
         // Supprimer le volcan
@@ -194,10 +196,12 @@ class VolcanBDManager
         $deleted = $connection->executeQuery($sql, [(int) $pk]);
 
         if ($deleted) {
-            return json_encode(['status' => 'success', 'message' => 'Volcan supprimé avec succès']);
+            $retour =  json_encode(['status' => 'success', 'message' => 'Volcan supprimé avec succès']);
         } else {
-            return json_encode(['status' => 'error', 'message' => 'Erreur lors de la suppression']);
+            $retour =  json_encode(['status' => 'error', 'message' => 'Erreur lors de la suppression']);
         }
+
+        return $retour;
     }
 }
 ?>

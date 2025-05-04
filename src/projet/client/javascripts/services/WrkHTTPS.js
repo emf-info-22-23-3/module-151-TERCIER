@@ -1,109 +1,73 @@
 /*
- * Classe WrkHTTPS : Couche de service qui gère la communication AJAX avec le serveur.
- * Cette classe encapsule toutes les méthodes pour interagir avec les données
- * des volcans et des pays (CRUD + login).
+ * Classe WrkHTTPS : Couche de service AJAX uniformisée.
  *
  * @author tercicer colin
- * @version 2.0 / 27.04.2025
+ * @version 3.0 / 04.05.2025
  */
 
 class WrkHTTPS {
     constructor(baseURL) {
-        // Stocke l'URL de base pour toutes les requêtes HTTP
         this.baseURL = baseURL;
     }
 
-    // Récupère tous les volcans et remappe leur structure pour une utilisation côté client
-    fetchVolcans(paysMap) {
-        return $.ajax({
-            type: "GET",
-            dataType: "json",
+    // Méthode privée générique pour uniformiser les requêtes AJAX
+    #request(method, action, data = {}, options = {}) {
+        const ajaxOptions = {
+            type: method,
             url: this.baseURL,
-            data: { action: "Get_volcans" }
-        }).then(response => {
-            // Transforme chaque volcan pour ajouter le nom du pays (via paysMap)
-            return response.map(volcan => ({
+            dataType: options.dataType || 'json',
+            ...options.ajaxExtras // permet d'ajouter d'autres options si besoin
+        };
+
+        if (method === 'GET') {
+            ajaxOptions.data = { action, ...data };
+        } else if (options.json) {
+            ajaxOptions.contentType = 'application/json';
+            ajaxOptions.data = JSON.stringify({ action, ...data });
+        } else {
+            ajaxOptions.data = { action, ...data };
+        }
+
+        return $.ajax(ajaxOptions);
+    }
+
+    fetchVolcans(paysMap) {
+        return this.#request('GET', 'Get_volcans')
+            .then(response => response.map(volcan => ({
                 id: volcan.pk_Volcan,
                 nom: volcan.nom,
                 altitude: volcan.altitude,
                 latitude: volcan.latitude,
                 longitude: volcan.longitude,
                 pays: paysMap[volcan.pk_Pays] || "Inconnu"
-            }));
-        });
+            })));
     }
 
-    // Récupère tous les pays et retourne un dictionnaire {id_pays: nom_pays}
     fetchPays() {
-        return $.ajax({
-            type: "GET",
-            dataType: "json",
-            url: this.baseURL,
-            data: { action: "Get_pays" }
-        }).then(response => {
-            return response.reduce((acc, pays) => {
+        return this.#request('GET', 'Get_pays')
+            .then(response => response.reduce((acc, pays) => {
                 acc[pays.pk_Pays] = pays.nom;
                 return acc;
-            }, {});
-        });
+            }, {}));
     }
 
-    // Récupère les volcans filtrés selon un nom et/ou un pays
-    fetchVolcansFiltered(nom, pays) {
-        return $.ajax({
-            type: "GET",
-            dataType: "json",
-            url: this.baseURL,
-            data: { 
-                action: "Get_volcans_filtered",
-                nom: nom || '',
-                pays: pays || ''
-            }
-        });
-    }    
+    fetchVolcansFiltered(nom = '', pays = '') {
+        return this.#request('GET', 'Get_volcans_filtered', { nom, pays });
+    }
 
-    // Ajoute un nouveau volcan en envoyant un POST avec des données JSON
     addVolcan(data) {
-        return $.ajax({
-            type: "POST",
-            url: this.baseURL,
-            contentType: "application/json",
-            data: JSON.stringify({ action: "Add_volcan", ...data })
-        });
+        return this.#request('POST', 'Add_volcan', data, { json: true });
     }
 
-    // Met à jour un volcan existant
     saveVolcan(data) {
-        return $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: this.baseURL,
-            data: { action: "Update_volcan", ...data }
-        });
+        return this.#request('POST', 'Update_volcan', data);
     }
 
-    // Supprime un volcan par son ID
     deleteVolcan(id) {
-        return $.ajax({
-            type: "DELETE",
-            url: this.baseURL,
-            contentType: "application/json",
-            dataType: "json",
-            data: JSON.stringify({ id })
-        });
+        return this.#request('DELETE', 'Delete_volcan', { id }, { json: true });
     }
 
-    // Vérifie les identifiants de connexion administrateur
     login(nom, pass) {
-        return $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: this.baseURL,
-            data: {
-                action: "Post_checkLogin",
-                Nom: nom,
-                Pass: pass
-            }
-        });
+        return this.#request('POST', 'Post_checkLogin', { Nom: nom, Pass: pass });
     }
 }
