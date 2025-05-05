@@ -1,8 +1,13 @@
 <?php
-// Autoriser les CORS en amont
-header('Access-Control-Allow-Origin: *');
+// Autoriser les CORS en amont (spécifique à l'origine de ton front)
+header('Access-Control-Allow-Origin: http://127.0.0.1:5500'); // en local
+header('Access-Control-Allow-Credentials: true'); // essentiel pour que les cookies marchent
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With');
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Si la méthode est OPTIONS (préflight), on répond juste 200 sans plus
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
@@ -22,8 +27,6 @@ include_once(__DIR__ . '/workers/PaysDBManager.php');
 
 // Vérification de la méthode HTTP utilisée pour la requête
 if (isset($_SERVER['REQUEST_METHOD'])) {
-
-
 
     // Switch basé sur la méthode HTTP (GET, POST, PUT, DELETE)
     switch ($_SERVER['REQUEST_METHOD']) {
@@ -180,11 +183,7 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
                     $result = $volcanManager->addVolcan($volcan);
 
                     // Retourner un message en fonction du résultat
-                    if ($result) {
-                        echo json_encode(['status' => 'success', 'message' => 'Volcan ajouté avec succès']);
-                    } else {
-                        echo json_encode(['status' => 'error', 'message' => 'Erreur lors de l\'ajout du volcan']);
-                    }
+                    echo json_encode($result);
                     break;
             }
             break;

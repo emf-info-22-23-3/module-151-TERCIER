@@ -16,6 +16,9 @@ class WrkHTTPS {
             type: method,
             url: this.baseURL,
             dataType: options.dataType || 'json',
+            xhrFields: {
+                withCredentials: true //  indispensable
+            },
             ...options.ajaxExtras // permet d'ajouter d'autres options si besoin
         };
 
@@ -60,7 +63,7 @@ class WrkHTTPS {
     }
 
     saveVolcan(data) {
-        return this.#request('POST', 'Update_volcan', data);
+        return this.#request('POST', 'Update_volcan', data, { json: true });
     }
 
     deleteVolcan(id) {
@@ -68,6 +71,6 @@ class WrkHTTPS {
     }
 
     login(nom, pass) {
-        return this.#request('POST', 'Post_checkLogin', { Nom: nom, Pass: pass });
+        return this.#request('POST', 'Post_checkLogin', { Nom: nom, Pass: pass }, { json: true });
     }
 }

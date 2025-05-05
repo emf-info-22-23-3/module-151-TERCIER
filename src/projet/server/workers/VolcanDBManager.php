@@ -93,7 +93,7 @@ class VolcanBDManager
         $checkSql = "SELECT COUNT(*) as count FROM t_volcan 
                      WHERE nom = ? AND latitude = ? AND longitude = ?";
         $existing = $connection->selectQuery($checkSql, [
-            htmlspecialchars($volcan->getNom()),
+            $volcan->getNom(),
             (float) $volcan->getLatitude(),
             (float) $volcan->getLongitude()
         ]);
