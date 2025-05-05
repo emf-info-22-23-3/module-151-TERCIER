@@ -53,8 +53,8 @@
                 return json_encode(["status" => "success", "message" => "Login réussi"]);
             } else {
                 // Login échoué
-                $mes = "Nom ou mot de passe incorrect |/ nom : ".$user." pass : ".$password." |/ ".(int)$bool." .|";
-                return json_encode(["status" => "error", "message" => $mes]);
+                
+                return json_encode(["status" => "error", "message" =>  "Nom ou mot de passe incorrect "]);
             }
         }
 
