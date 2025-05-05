@@ -143,12 +143,12 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
                     case 'Add_volcan':
                         if (!isset($data['nom'], $data['altitude'], $data['latitude'], $data['longitude'], $data['pays'])) {
                             http_response_code(400);
-                            echo json_encode(['status' => 'error', 'message' => 'Paramètre(s) manquant(s)']);
+                            echo json_encode(['status' => 'error', 'message' => 'Paramètre(s) manquant(s) (le pays doit être un des pays de la liste)']);
                             break;
                         }
                         if (!is_numeric($data['altitude']) || !is_numeric($data['latitude']) || !is_numeric($data['longitude']) || !is_numeric($data['pays'])) {
                             http_response_code(400);
-                            echo json_encode(['status' => 'error', 'message' => 'Les valeurs doivent être numériques']);
+                            echo json_encode(['status' => 'error', 'message' => 'Les valeurs des champs altitude, latitude, longitude doivent être numériques']);
                             break;
                         }
                         $volcan = new Volcan(null, $data['nom'], $data['altitude'], $data['latitude'], $data['longitude'], $data['pays']);

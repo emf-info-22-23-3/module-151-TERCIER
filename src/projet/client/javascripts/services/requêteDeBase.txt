@@ -78,7 +78,20 @@ class WrkHTTPS {
             type: "POST",
             dataType: "json",
             url: this.baseURL,
-            data: { action: "Update_volcan", ...data }
+            data: { action: "Update_volcan", ...data },
+            success: function (response) {
+                if (response.status === "success") {
+                    alert("Volcan modifié !");
+                    fetchVolcans();
+                    closePopup();
+                } else {
+                    alert("Erreur : " + response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Erreur AJAX:", status, error);
+                alert("Une erreur est survenue : " + error);
+            }
         });
     }
 
@@ -89,7 +102,19 @@ class WrkHTTPS {
             url: this.baseURL,
             contentType: "application/json",
             dataType: "json",
-            data: JSON.stringify({ id })
+            data: JSON.stringify({ id }),
+            success: function (response) {
+                if (response.status === "success") {
+                    alert("Volcan supprimé !");
+                    fetchVolcans();  // Recharger la liste des volcans après la suppression
+                } else {
+                    alert("Erreur : " + response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Erreur AJAX:", status, error);
+                alert("Une erreur est survenue : " + error);
+            }
         });
     }
 

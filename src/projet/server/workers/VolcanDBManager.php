@@ -106,7 +106,7 @@ class VolcanBDManager
         $sql = "INSERT INTO t_volcan (nom, altitude, latitude, longitude, FK_pays) 
                 VALUES (?, ?, ?, ?, ?)";
         $params = [
-            htmlspecialchars($volcan->getNom()),
+            htmlspecialchars(trim($volcan->getNom())),//Suppression des espaces inutiles
             (float) $volcan->getAltitude(),
             (float) $volcan->getLatitude(),
             (float) $volcan->getLongitude(),
@@ -155,7 +155,7 @@ class VolcanBDManager
                 WHERE PK_volcan = ?";
 
         $params = [
-            trim($volcan->getNom()), // Suppression des espaces inutiles
+            htmlspecialchars(trim($volcan->getNom())), // Suppression des espaces inutiles
             (float) $volcan->getAltitude(),
             (float) $volcan->getLatitude(),
             (float) $volcan->getLongitude(),

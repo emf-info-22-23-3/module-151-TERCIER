@@ -69,13 +69,5 @@
             return json_encode(["status" => "success", "message" => "Déconnexion réussie"]);
         }
 
-        /**
-        * Vérifie si l'utilisateur est déjà connecté.
-        *
-        * @return bool True si l'utilisateur est connecté, false sinon
-        */
-       /* public function isUserConnected() {
-            return $this->sessionManager->isConnected();
-        }*/
 	}
 ?>
