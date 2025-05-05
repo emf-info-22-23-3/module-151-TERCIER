@@ -6,6 +6,10 @@
  *
  * Cette classe permet la gestion des volcans en interagissant avec VolcanBDManager
  * et en vérifiant l'authentification via SessionManager.
+ * 
+ * @version 3.0 / 06.05.2025
+ * @author Tercicer Colin
+ * @project Project
  */
 class VolcanManager
 {
@@ -51,6 +55,7 @@ class VolcanManager
     private function handleRequest(callable $callback)
     {
         if (!$this->isAuthenticated()) {
+            http_response_code(401);
             return json_encode(["status" => "error", "message" => "Accès refusé. Authentification requise."]);
         }
 

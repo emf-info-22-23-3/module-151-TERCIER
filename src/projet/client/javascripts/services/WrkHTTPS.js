@@ -2,7 +2,7 @@
  * Classe WrkHTTPS : Couche de service AJAX uniformisée.
  *
  * @author tercicer colin
- * @version 3.0 / 04.05.2025
+ * @version 3.0 / 06.05.2025
  */
 
 class WrkHTTPS {

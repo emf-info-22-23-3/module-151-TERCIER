@@ -14,7 +14,7 @@
 	* Cette classe permet la gestion des logins en vérifiant les identifiants,
 	* en ouvrant et fermant les sessions utilisateur.
 	*
-	* @version 1.0
+	* @version 3.0 / 06.05.2025
 	* @author Tercicer Colin
 	* @project Project
 	*/

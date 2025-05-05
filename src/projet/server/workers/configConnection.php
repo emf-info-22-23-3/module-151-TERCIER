@@ -3,6 +3,10 @@
  * Fichier de configuration de la base de données
  *
  * Définit les constantes utilisées pour la connexion à la base de données.
+ * 
+ * @version 3.0 / 06.05.2025
+ * @author Tercicer Colin
+ * @project Project
  */
 
 // Type de base de données utilisé (ex: MySQL, PostgreSQL, etc.)

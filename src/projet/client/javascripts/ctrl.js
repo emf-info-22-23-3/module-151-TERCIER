@@ -4,7 +4,7 @@
  * ainsi que l'ajout, la modification et la suppression des volcans.
  * 
  * @author tercicer colin
- * @version 2.0 / 27.04.2025
+ * @version 3.0 / 06.05.2025
  */
 
 document.addEventListener("DOMContentLoaded", async () => {

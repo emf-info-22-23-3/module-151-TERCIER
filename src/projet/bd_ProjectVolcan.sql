@@ -22,9 +22,9 @@ CREATE TABLE IF NOT EXISTS t_admin (
     nom VARCHAR(30) NOT NULL,
     pass VARCHAR(64) NOT NULL 
 );
--- Insertion de l'admin
+-- Insertion de l'admin Pa$$w0rd
 INSERT INTO t_admin(PK_admin, nom, pass) VALUES
-(1, 'admin', '$2y$10$upCoXif2VJ/d0oOQt7IP4./Nw6nuqTqhOZP6AdSggRcqLK6KCxXyS');
+(1, 'admin', '$2y$10$bHa2rxFsay0vxUgENCXCb.hddJuHv7wBYh8sgrkWCDy2dtZzDs2vm');
 -- Insertion des pays
 INSERT INTO t_pays (PK_pays, nom) VALUES
 (1, 'Afghanistan'),

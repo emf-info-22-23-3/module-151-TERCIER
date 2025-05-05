@@ -3,6 +3,10 @@
  * Classe Connection
  *
  * Gère la connexion à la base de données et l'exécution des requêtes SQL.
+ * 
+ * @version 3.0 / 06.05.2025
+ * @author Tercicer Colin
+ * @project Project
  */
 include_once(__DIR__ . '/configConnection.php');
 

@@ -3,6 +3,10 @@
  * Classe PaysManager
  *
  * Cette classe permet la gestion des pays en interagissant avec le gestionnaire de base de données PaysBDManager.
+ * 
+ * @version 3.0 / 06.05.2025
+ * @author Tercicer Colin
+ * @project Project
  */
 class PaysManager
 {

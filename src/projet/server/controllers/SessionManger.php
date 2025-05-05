@@ -3,6 +3,10 @@
  * Classe SessionManager
  *
  * Cette classe gère les sessions utilisateur en les ouvrant, vérifiant et détruisant.
+ * 
+ * @version 3.0 / 06.05.2025
+ * @author Tercicer Colin
+ * @project Project
  */
 class SessionManager {
     /**
