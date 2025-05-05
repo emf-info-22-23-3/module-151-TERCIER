@@ -13,6 +13,8 @@ class Connection {
      */
     private $pdo;
 
+    private $lastError = null;
+
     /**
      * Constructeur : Initialise la connexion à la base de données.
      */
@@ -83,15 +85,17 @@ class Connection {
             
             // Vérification des erreurs après exécution
             if (!$success) {
-                // Si l'exécution échoue, récupérer l'erreur SQL
                 $errorInfo = $stmt->errorInfo();
-                error_log("Erreur SQL : " . $errorInfo[2]); // Afficher l'erreur détaillée
+                $this->lastError = $errorInfo[2]; // stocke le message d'erreur
+                error_log("Erreur SQL : " . $errorInfo[2]);
                 return false;
             }
+            
             
             return $success;
         } catch (PDOException $e) {
             // Log l'exception avec les détails
+            $this->lastError = $e->getMessage();
             error_log("Erreur SQL : " . $e->getMessage());
             return false;
         }
@@ -105,5 +109,10 @@ class Connection {
     public function getLastInsertId() {
         return $this->pdo->lastInsertId();
     }
+
+    public function getLastError() {
+        return $this->lastError;
+    }
+    
 }
 ?>

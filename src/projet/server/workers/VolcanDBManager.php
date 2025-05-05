@@ -115,15 +115,20 @@ class VolcanBDManager
 
         try {
             $result = $connection->executeQuery($sql, $params);
-
+        
             if ($result) {
                 return json_encode(['status' => 'success', 'message' => 'Volcan ajouté avec succès']);
             } else {
-                return json_encode(['status' => 'error', 'message' => 'Erreur lors de l\'ajout']);
+                // Récupère et expose l'erreur SQL :
+                return json_encode([
+                    'status' => 'error',
+                    'message' => 'Erreur lors de l\'ajout',
+                    'sql_error' => $connection->getLastError()
+                ]);
             }
         } catch (Exception $e) {
             error_log("Erreur SQL : " . $e->getMessage());
-            return json_encode(['status' => 'error', 'message' => 'Erreur interne']);
+            return json_encode(['status' => 'error', 'message' => 'Erreur interne', 'exception' => $e->getMessage()]);
         }
     }
 
