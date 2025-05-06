@@ -42,6 +42,8 @@ class LoginBDManager
             // Vérification si un résultat a été trouvé.
             if ($result != null && isset($result["pass"])) {
                 $row = $result["pass"];
+                
+                
                 $resulte = password_verify($pass, $row);
             }
         } catch (Exception $e) {

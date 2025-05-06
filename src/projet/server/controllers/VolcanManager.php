@@ -89,7 +89,10 @@ class VolcanManager
      */
     public function addVolcan($volcan)
     {
-        return $this->handleRequest(fn() => $this->volcanBDManager->addVolcan($volcan));
+        //return $this->handleRequest(fn() => $this->volcanBDManager->addVolcan($volcan));
+        return $this->handleRequest(function() use ($volcan) {
+            return $this->volcanBDManager->addVolcan($volcan);
+        });
     }
 
     /**
@@ -101,7 +104,10 @@ class VolcanManager
      */
     public function modifyExistingVolcan($pk, $volcan)
     {
-        return $this->handleRequest(fn() => $this->volcanBDManager->modifyVolcan($pk, $volcan));
+        //return $this->handleRequest(fn() => $this->volcanBDManager->modifyVolcan($pk, $volcan));
+        return $this->handleRequest(function() use ($pk, $volcan) {
+            return $this->volcanBDManager->modifyVolcan($pk, $volcan);
+        });        
     }
 
     /**
@@ -112,7 +118,10 @@ class VolcanManager
      */
     public function deleteVolcanById($pk)
     {
-        return $this->handleRequest(fn() => $this->volcanBDManager->deleteVolcan($pk));
+        //return $this->handleRequest(fn() => $this->volcanBDManager->deleteVolcan($pk));
+        return $this->handleRequest(function() use ($pk) {
+            return $this->volcanBDManager->deleteVolcan($pk);
+        });        
     }
 }
 

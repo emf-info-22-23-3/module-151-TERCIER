@@ -1,6 +1,6 @@
 <?php
 // Autoriser les CORS en amont (spécifique à l'origine de ton front)
-header('Access-Control-Allow-Origin: http://127.0.0.1:5500'); // en local
+//header('Access-Control-Allow-Origin: http://127.0.0.1:5500'); // en local mais pour une reson obscure, ne fonctionne pas
 header('Access-Control-Allow-Credentials: true'); // essentiel pour que les cookies marchent
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With');

@@ -32,7 +32,8 @@ class Connection {
             );
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            error_log("Erreur de connexion : " . $e->getMessage());
+            echo("Erreur de connexion : " . $e->getMessage());
+            
             die(json_encode(['error' => "Erreur de connexion à la base de données."]));
         }
     }
